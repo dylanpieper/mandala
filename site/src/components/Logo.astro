@@ -1,0 +1,29 @@
+---
+// The mandala at the top of the home page (scripts/logo.ts).
+---
+
+<canvas class="logo" data-logo role="img" aria-label="The Mandala logo: sand gathering round a stone lotus, then swept away"></canvas>
+
+<script>
+  import { drawLogo } from '../scripts/logo';
+  let stop: (() => void) | null = null;
+  document.addEventListener('astro:page-load', () => {
+    stop?.();
+    const c = document.querySelector<HTMLCanvasElement>('[data-logo]');
+    stop = c ? drawLogo(c) : null;
+  });
+</script>
+
+<style>
+  .logo {
+    display: block;
+    width: 200px;
+    height: 200px;
+  }
+  @media (max-width: 820px) {
+    .logo {
+      width: 160px;
+      height: 160px;
+    }
+  }
+</style>

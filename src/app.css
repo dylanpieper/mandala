@@ -1,0 +1,268 @@
+/* Mandala's tokens. site/docs/design.md says why each is what it is. */
+
+/* Fonts are bundled (src/main.ts), so the app needs no network to look right. */
+
+:root {
+  --ground: #141317;
+  --night: #0e0d10;
+  --rail: #17161a;
+  --raised: #18171b;
+  --hover: #222127;
+  --line: #2c2a31;
+  --line-strong: #3a373f;
+
+  --bone: #ece6da;
+  --parchment: #c9c2b6;
+  --ash: #a29c92;
+  --dust: #8a847b;
+
+  --sand: #d9ae6c;
+  --sand-ground: #24211c;
+  --sand-line: #5a4a30;
+  --stone: #a9bcc6;
+  --stone-ground: #1c2226;
+  --stone-line: #3a4a52;
+  --vermilion: #d9653f;
+  --life-sun: #ebc65a;
+  --life-breath: #8db4e8;
+  --life-moon: #c9c4bb;
+  --lapis: #5b82cf;
+  --jade: #5aae88;
+
+  --serif: 'Newsreader Variable', Georgia, serif;
+  --sans: 'Geist Variable', system-ui, sans-serif;
+  --mono: 'Geist Mono Variable', ui-monospace, monospace;
+
+  --radius: 10px;
+  --pill: 999px;
+
+  /* Motion: everything moves, nothing lingers at the end. */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --quick: 160ms;
+  --settle: 420ms;
+  --breath: 4000ms;
+
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  margin: 0;
+  height: 100%;
+  /* The window never scrolls: each screen fits it, and its own parts scroll. */
+  overflow: hidden;
+  background: var(--ground);
+  color: var(--bone);
+  font-family: var(--sans);
+  font-size: 13px;
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+/* Scrollbars stay in the dark: a thin thumb in the border gray, no track. */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track,
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--line-strong);
+}
+
+:focus-visible {
+  outline: 1.5px solid var(--sand);
+  outline-offset: 2px;
+}
+
+/* A pill with an icon before its word: the only kind of button. */
+.pill {
+  height: 32px;
+  padding: 0 14px;
+  border-radius: var(--pill);
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--ash);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: background var(--quick) var(--ease), border-color var(--quick) var(--ease), color var(--quick) var(--ease);
+}
+.pill:hover {
+  background: var(--hover);
+  color: var(--bone);
+}
+.pill.stone {
+  border-color: var(--stone-line);
+  background: var(--stone-ground);
+  color: var(--stone);
+}
+.pill.sand {
+  border-color: var(--sand-line);
+  background: var(--sand-ground);
+  color: var(--sand);
+}
+.pill.large {
+  height: 44px;
+  padding: 0 22px;
+  font-size: 14px;
+}
+.pill:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+/* Dragging notes (`src/lib/drag.svelte.ts`). Each rail sets `--drop` to its
+   own color. The lifted note dims in place; a list target shows a line where
+   the note will land; any other target is lit. */
+body.dragging,
+body.dragging * {
+  cursor: grabbing !important;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.lifted {
+  opacity: 0.35;
+  transition: opacity var(--quick) var(--ease);
+}
+.drop-over {
+  background: var(--hover) !important;
+  transition: background var(--quick) var(--ease), box-shadow var(--quick) var(--ease);
+}
+.drop-over.drop-before {
+  background: transparent !important;
+  box-shadow: inset 0 2px 0 var(--drop, var(--bone));
+}
+.drop-over.drop-after {
+  background: transparent !important;
+  box-shadow: inset 0 -2px 0 var(--drop, var(--bone));
+}
+/* Held on a note long enough to combine with it: the note glows softly. */
+.drop-over.drop-onto {
+  background: var(--hover) !important;
+  box-shadow:
+    inset 0 0 0 1px var(--drop, var(--bone)),
+    0 0 18px -6px var(--drop, var(--bone));
+  transition: background var(--settle) var(--ease), box-shadow var(--settle) var(--ease);
+}
+
+/* Hold to act (`src/lib/hold.ts`): the control fills from the left in its
+   own color while pressed, and drains back if let go early. */
+.holdable {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.holdable::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: currentColor;
+  opacity: 0.16;
+  transform: scaleX(var(--hold, 0));
+  transform-origin: left;
+  pointer-events: none;
+}
+
+.mono {
+  font-family: var(--mono);
+}
+
+.eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dust);
+}
+
+.serif {
+  font-family: var(--serif);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Keep motion (`lib/flight.ts`): the card that carries a kept note from the
+   sand rail to the stone rail. Its colors and place are animated. */
+.flight {
+  position: fixed;
+  z-index: 200;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+}
+
+/* A rail's row that had to be found (`lib/reveal.ts`): one soft glow in its
+   rail's color, then gone. */
+.grain.found {
+  --found: var(--sand-line);
+  --found-ground: var(--sand-ground);
+}
+.note.found {
+  --found: var(--stone-line);
+  --found-ground: var(--stone-ground);
+}
+.found {
+  animation: found 1400ms var(--ease);
+}
+@keyframes found {
+  0%,
+  30% {
+    background: var(--found-ground);
+    box-shadow: inset 0 0 0 1px var(--found);
+  }
+  100% {
+    box-shadow: inset 0 0 0 1px transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --quick: 1ms;
+    --settle: 1ms;
+  }
+}

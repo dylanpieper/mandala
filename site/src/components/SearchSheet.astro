@@ -1,0 +1,126 @@
+---
+// Search every doc: a raised card over the dimmed page, as in the app.
+import Icon from './Icon.astro';
+---
+
+<dialog class="search" data-search aria-label="Search the docs" data-pagefind-ignore>
+  <label class="field">
+    <Icon name="search" size={16} />
+    <input type="search" placeholder="Search the docs" autocomplete="off" spellcheck="false" />
+    <span class="mono esc">Esc</span>
+  </label>
+  <ol></ol>
+  <p class="none" data-empty hidden>Nothing found.</p>
+</dialog>
+
+<script>
+  import { startSearch } from '../scripts/search';
+  document.addEventListener('astro:page-load', startSearch);
+</script>
+
+<style>
+  .search {
+    width: min(620px, calc(100vw - 32px));
+    max-height: min(560px, calc(100vh - 120px));
+    margin: 96px auto auto;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--raised);
+    color: var(--bone);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    transform: translateY(8px);
+    transition:
+      opacity var(--settle) var(--ease),
+      transform var(--settle) var(--ease),
+      display var(--settle) allow-discrete,
+      overlay var(--settle) allow-discrete;
+  }
+  .search:not([open]) {
+    display: none;
+  }
+  .search[open] {
+    opacity: 1;
+    transform: none;
+  }
+  @starting-style {
+    .search[open] {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+  }
+  .search::backdrop {
+    background: rgb(14 13 16 / 0.7);
+    backdrop-filter: blur(2px);
+  }
+  .field {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 18px;
+    border-bottom: 1px solid var(--line);
+    color: var(--dust);
+  }
+  input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--bone);
+    font: 400 18px var(--serif);
+  }
+  input::placeholder {
+    color: var(--dust);
+  }
+  input::-webkit-search-cancel-button {
+    display: none;
+  }
+  .esc {
+    font-size: 11px;
+  }
+  ol {
+    list-style: none;
+    margin: 0;
+    padding: 8px;
+    overflow-y: auto;
+  }
+  ol:empty {
+    display: none;
+  }
+  ol :global(a) {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    text-decoration: none;
+    color: inherit;
+    transition: background var(--quick) var(--ease);
+  }
+  ol :global(li.on a),
+  ol :global(a:hover) {
+    background: var(--hover);
+  }
+  ol :global(.title) {
+    color: var(--bone);
+    font-size: 13.5px;
+  }
+  ol :global(.excerpt) {
+    color: var(--ash);
+    font: 400 15px/1.5 var(--serif);
+  }
+  ol :global(mark) {
+    background: none;
+    color: var(--sand);
+  }
+  .none {
+    margin: 0;
+    padding: 18px;
+    color: var(--dust);
+    font-size: 13px;
+  }
+</style>

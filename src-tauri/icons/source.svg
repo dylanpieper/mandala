@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+<rect x="64" y="64" width="896" height="896" rx="200" fill="#141317"/>
+<g transform="translate(512 512) scale(0.86)">
+  <circle r="414" fill="none" stroke="#a9bcc6" stroke-opacity="0.5" stroke-width="26"/>
+  <circle cx="288.3" cy="119.4" r="30" fill="#d9ae6c"/>
+  <circle cx="352" cy="0" r="21" fill="#d9ae6c"/>
+  <circle cx="119.4" cy="288.3" r="30" fill="#d9ae6c"/>
+  <circle cx="248.9" cy="248.9" r="21" fill="#d9ae6c"/>
+  <circle cx="-119.4" cy="288.3" r="30" fill="#d9ae6c"/>
+  <circle cx="0" cy="352" r="21" fill="#d9ae6c"/>
+  <circle cx="-288.3" cy="119.4" r="30" fill="#d9ae6c"/>
+  <circle cx="-248.9" cy="248.9" r="21" fill="#d9ae6c"/>
+  <circle cx="-288.3" cy="-119.4" r="30" fill="#d9ae6c"/>
+  <circle cx="-352" cy="0" r="21" fill="#d9ae6c"/>
+  <circle cx="-119.4" cy="-288.3" r="30" fill="#d9ae6c"/>
+  <circle cx="-248.9" cy="-248.9" r="21" fill="#d9653f"/>
+  <circle cx="119.4" cy="-288.3" r="30" fill="#d9ae6c"/>
+  <circle cx="0" cy="-352" r="21" fill="#d9ae6c"/>
+  <circle cx="288.3" cy="-119.4" r="30" fill="#d9ae6c"/>
+  <circle cx="248.9" cy="-248.9" r="21" fill="#d9ae6c"/>
+  <path d="M0 -118C56 -156 64 -218 0 -272C-64 -218 -56 -156 0 -118Z" fill="none" stroke="#a9bcc6" stroke-width="28" stroke-linejoin="round"/>
+  <path d="M83.4 -83.4C149.9 -70.7 199.4 -108.9 192.3 -192.3C108.9 -199.4 70.7 -149.9 83.4 -83.4Z" fill="none" stroke="#a9bcc6" stroke-width="28" stroke-linejoin="round"/>
+  <path d="M118 0C156 56 218 64 272 0C218 -64 156 -56 118 0Z" fill="none" stroke="#a9bcc6" stroke-width="28" stroke-linejoin="round"/>
+  <path d="M83.4 83.4C70.7 149.9 108.9 199.4 192.3 192.3C199.4 108.9 149.9 70.7 83.4 83.4Z" fill="none" stroke="#a9bcc6" stroke-width="28" stroke-linejoin="round"/>
+  <path d="M0 118C-56 156 -64 218 0 272C64 218 56 156 0 118Z" fill="none" stroke="#a9bcc6" stroke-width="28" stroke-linejoin="round"/>
+  <path d="M-83.4 83.4C-149.9 70.7 -199.4 108.9 -192.3 192.3C-108.9 199.4 -70.7 149.9 -83.4 83.4Z" fill="none" stroke="#a9bcc6" stroke-width="28" stroke-linejoin="round"/>
+  <path d="M-118 0C-156 -56 -218 -64 -272 0C-218 64 -156 56 -118 0Z" fill="none" stroke="#a9bcc6" stroke-width="28" stroke-linejoin="round"/>
+  <path d="M-83.4 -83.4C-70.7 -149.9 -108.9 -199.4 -192.3 -192.3C-199.4 -108.9 -149.9 -70.7 -83.4 -83.4Z" fill="none" stroke="#a9bcc6" stroke-width="28" stroke-linejoin="round"/>
+  <circle r="70" fill="#a9bcc6"/>
+</g>
+</svg>

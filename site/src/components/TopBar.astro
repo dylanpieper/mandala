@@ -1,0 +1,96 @@
+---
+// The bar over every page: the mark on the left, the way round on the right,
+// and (in the docs) the search field in the middle.
+import Icon from './Icon.astro';
+import { withBase } from '../lib/base';
+
+interface Props {
+  search?: boolean;
+}
+const { search = false } = Astro.props;
+---
+
+<header class="top" class:list={{ search }}>
+  <a class="brand" href={withBase('/')}><Icon name="mandala" size={17} class="mark" />Mandala</a>
+  {search && <slot name="search" />}
+  <nav aria-label="Site">
+    <slot name="menu" />
+    <a class="pill" href={withBase('/docs/how-it-works')}><Icon name="text" size={15} />Docs</a>
+    <a class="pill" href={withBase('/docs/changes')}><Icon name="commit" size={15} />Changes</a>
+    <a class="pill" href="https://github.com/dylanpieper/mandala"><Icon name="next" size={15} />GitHub</a>
+  </nav>
+</header>
+
+<style>
+  .top {
+    height: 56px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    padding: 0 28px;
+    color: var(--ash);
+  }
+  .top.search {
+    grid-template-columns: 260px 1fr 260px;
+    padding: 0;
+    height: 52px;
+    background: var(--rail);
+    border-bottom: 1px solid var(--line);
+    position: sticky;
+    top: 0;
+    z-index: 5;
+  }
+  .search .brand {
+    padding: 0 20px;
+  }
+  .search nav {
+    padding: 0 20px;
+  }
+  .brand {
+    display: inline-flex;
+    gap: 10px;
+    align-items: center;
+    color: var(--bone);
+    text-decoration: none;
+    font-size: 14px;
+  }
+  .brand :global(.mark) {
+    color: var(--stone);
+  }
+  nav {
+    justify-self: end;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  /* Large enough to find at a glance. */
+  nav :global(.pill) {
+    height: 36px;
+    padding: 0 16px;
+    font-size: 14px;
+  }
+  @media (max-width: 900px) {
+    .top.search {
+      grid-template-columns: auto 1fr auto;
+    }
+    /* In the docs the Docs pill opens the list, so its link would repeat it. */
+    .search nav a[href$='/docs/how-it-works'] {
+      display: none;
+    }
+    .search .brand,
+    .search nav {
+      padding: 0 16px;
+    }
+  }
+  @media (max-width: 520px) {
+    .top {
+      padding: 0 18px;
+    }
+    nav :global(.pill) {
+      padding: 0 12px;
+    }
+    nav a[href*='changes'] {
+      display: none;
+    }
+  }
+</style>

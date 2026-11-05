@@ -1,0 +1,33 @@
+---
+// Every page: fonts (bundled, no network), tokens, and the page fade.
+import '@fontsource-variable/newsreader/opsz.css';
+import '@fontsource-variable/newsreader/opsz-italic.css';
+import '@fontsource-variable/geist';
+import '@fontsource-variable/geist-mono';
+import '../styles/tokens.css';
+import '../styles/site.css';
+import { ClientRouter } from 'astro:transitions';
+import { withBase } from '../lib/base';
+
+interface Props {
+  title: string;
+  description: string;
+}
+const { title, description } = Astro.props;
+const full = title === 'Mandala' ? title : `${title} · Mandala`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{full}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" href={withBase('/favicon.svg')} type="image/svg+xml" />
+    <ClientRouter />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

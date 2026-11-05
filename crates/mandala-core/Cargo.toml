@@ -1,0 +1,20 @@
+[package]
+name = "mandala-core"
+description = "Everything Mandala does without a window: the vault, lifespans, sweeping, settling, keeping, arranging and merging."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+chrono.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+regex = "1"
+walkdir = "2"
+
+[dev-dependencies]
+tempfile = "3"
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_Storage_FileSystem"] }

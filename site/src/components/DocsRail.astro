@@ -1,0 +1,67 @@
+---
+// The docs list: three groups, the page being read lit in stone.
+import { GROUPS, PAGES } from '../lib/docs';
+import { withBase } from '../lib/base';
+
+interface Props {
+  slug: string;
+}
+const { slug } = Astro.props;
+const tone = { 'Using Mandala': 'sand', 'How it is built': 'stone', 'Working on it': '' } as const;
+---
+
+<nav class="docs" aria-label="Docs">
+  {
+    GROUPS.map((g) => (
+      <section>
+        <h2 class:list={['eyebrow', tone[g]]}>{g}</h2>
+        {PAGES.filter((p) => p.group === g).map((p) => (
+          <a class:list={['doc', { on: p.slug === slug }]} href={withBase(`/docs/${p.slug}`)} aria-current={p.slug === slug ? 'page' : undefined}>
+            {p.title}
+          </a>
+        ))}
+      </section>
+    ))
+  }
+</nav>
+
+<style>
+  .docs {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+  section {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+  h2 {
+    margin: 0 0 6px;
+    padding: 0 8px;
+    font-weight: 400;
+  }
+  .sand {
+    color: var(--sand);
+  }
+  .stone {
+    color: var(--stone);
+  }
+  .doc {
+    padding: 6px 8px;
+    border-radius: 6px;
+    color: var(--parchment);
+    text-decoration: none;
+    transition:
+      background var(--quick) var(--ease),
+      color var(--quick) var(--ease);
+  }
+  .doc:hover {
+    background: var(--hover);
+    color: var(--bone);
+  }
+  .doc.on {
+    background: var(--stone-ground);
+    color: var(--stone);
+  }
+</style>

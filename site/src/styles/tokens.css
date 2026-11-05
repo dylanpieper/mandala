@@ -1,0 +1,50 @@
+/* Mandala's tokens, copied from src/app.css (site/docs/design.md says why each is
+   what it is). Change them there first, then here. No new colors. */
+
+:root {
+  --ground: #141317;
+  --night: #0e0d10;
+  --rail: #17161a;
+  --raised: #18171b;
+  --hover: #222127;
+  --line: #2c2a31;
+  --line-strong: #3a373f;
+
+  --bone: #ece6da;
+  --parchment: #c9c2b6;
+  --ash: #a29c92;
+  --dust: #8a847b;
+
+  --sand: #d9ae6c;
+  --sand-ground: #24211c;
+  --sand-line: #5a4a30;
+  --stone: #a9bcc6;
+  --stone-ground: #1c2226;
+  --stone-line: #3a4a52;
+  --vermilion: #d9653f;
+  --life-sun: #ebc65a;
+  --life-breath: #8db4e8;
+  --life-moon: #c9c4bb;
+
+  --serif: 'Newsreader Variable', Georgia, serif;
+  --sans: 'Geist Variable', system-ui, sans-serif;
+  --mono: 'Geist Mono Variable', ui-monospace, monospace;
+
+  --radius: 10px;
+  --pill: 999px;
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --quick: 160ms;
+  --settle: 420ms;
+  --breath: 4000ms;
+
+  color-scheme: dark;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --quick: 1ms;
+    --settle: 1ms;
+    --breath: 1ms;
+  }
+}

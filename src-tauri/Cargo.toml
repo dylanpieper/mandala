@@ -1,0 +1,25 @@
+[package]
+name = "mandala"
+description = "Mandala: markdown notes that dissolve, unless you keep them."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+# The binary name is what macOS shows in the menu bar and Dock while developing.
+[[bin]]
+name = "Mandala"
+path = "src/main.rs"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+mandala-core = { path = "../crates/mandala-core" }
+anyhow.workspace = true
+chrono.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+tauri = { version = "2", features = [] }
+tauri-plugin-dialog = "2"
+notify = "8"
+tauri-plugin-opener = "2"

@@ -1,0 +1,12 @@
+node_modules/
+target/
+dist/
+shots/
+src-tauri/gen/
+.DS_Store
+*.mandala-tmp
+.env
+.env.*
+.astro/
+.superpowers/
+docs/superpowers/

@@ -1,0 +1,102 @@
+/* The site's ground, type and the one kind of button, as in the app. */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--night);
+  color: var(--bone);
+  font-family: var(--sans);
+  font-size: 13px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  scrollbar-color: var(--line) transparent;
+  scrollbar-width: thin;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+a {
+  color: inherit;
+}
+
+/* No line ends with a lone word or two (the owner's rule). */
+p,
+li,
+td,
+figcaption {
+  text-wrap: pretty;
+}
+h1,
+h2,
+h3,
+.balance {
+  text-wrap: balance;
+}
+
+.mono {
+  font-family: var(--mono);
+}
+.serif {
+  font-family: var(--serif);
+}
+.eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dust);
+}
+
+/* The pill is the only button: an icon before its word. */
+.pill {
+  height: 32px;
+  padding: 0 14px;
+  border-radius: var(--pill);
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--ash);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font: inherit;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background var(--quick) var(--ease),
+    border-color var(--quick) var(--ease),
+    color var(--quick) var(--ease);
+}
+.pill:hover {
+  background: var(--hover);
+  color: var(--bone);
+}
+.pill.stone {
+  border-color: var(--stone-line);
+  background: var(--stone-ground);
+  color: var(--stone);
+}
+.pill.sand {
+  border-color: var(--sand-line);
+  background: var(--sand-ground);
+  color: var(--sand);
+}
+.pill.large {
+  height: 44px;
+  padding: 0 22px;
+  font-size: 14px;
+}
+
+::selection {
+  background: var(--sand-ground);
+  color: var(--bone);
+}
+
+:focus-visible {
+  outline: 1px solid var(--sand);
+  outline-offset: 2px;
+}

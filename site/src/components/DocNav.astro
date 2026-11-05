@@ -1,0 +1,65 @@
+---
+// Back and Next at the foot of a doc, then where its text lives.
+import { PAGES, type Page } from '../lib/docs';
+import { withBase } from '../lib/base';
+
+interface Props {
+  page: Page;
+}
+const { page } = Astro.props;
+const i = PAGES.findIndex((p) => p.slug === page.slug);
+const back = i > 0 ? { href: withBase(`/docs/${PAGES[i - 1].slug}`), title: PAGES[i - 1].title } : { href: withBase('/'), title: 'Home' };
+const next = i < PAGES.length - 1 ? { href: withBase(`/docs/${PAGES[i + 1].slug}`), title: PAGES[i + 1].title } : null;
+---
+
+<nav class="next" aria-label="Back and next">
+  <a href={back.href}><span class="eyebrow">Back</span>{back.title}</a>
+  {next && <a class="fwd" href={next.href}><span class="eyebrow">Next</span>{next.title}</a>}
+</nav>
+<p class="source mono">
+  <span>{page.source}</span>
+  <a href={`https://github.com/dylanpieper/mandala/edit/main/${page.source}`}>Edit on GitHub</a>
+</p>
+
+<style>
+  .next {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 72px;
+  }
+  .next a {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 16px 18px;
+    border-radius: 14px;
+    background: var(--rail);
+    color: var(--bone);
+    text-decoration: none;
+    font-size: 14px;
+    transition: background var(--quick) var(--ease);
+  }
+  .next a:hover {
+    background: var(--hover);
+  }
+  .next .fwd {
+    grid-column: 2;
+    text-align: right;
+  }
+  .source {
+    margin: 28px 0 0;
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    color: var(--dust);
+    font-size: 12px;
+  }
+  .source a {
+    color: var(--dust);
+    transition: color var(--quick) var(--ease);
+  }
+  .source a:hover {
+    color: var(--sand);
+  }
+</style>

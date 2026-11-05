@@ -1,0 +1,81 @@
+---
+// "On this page": the page's headings; a sand dot follows the one in view.
+import type { Heading } from '../lib/markdown';
+
+interface Props {
+  headings: Heading[];
+}
+const { headings } = Astro.props;
+---
+
+{
+  headings.length > 0 && (
+    <nav class="toc" aria-label="On this page" data-toc>
+      <h2 class="eyebrow">On this page</h2>
+      {headings.map((h) => (
+        <a href={`#${h.id}`} class:list={{ sub: h.depth === 3 }}>
+          <i aria-hidden="true" />
+          {h.text}
+        </a>
+      ))}
+    </nav>
+  )
+}
+
+<script>
+  import { follow } from '../scripts/onThisPage';
+  let stop: (() => void) | null = null;
+  const start = () => {
+    stop?.();
+    const toc = document.querySelector<HTMLElement>('[data-toc]');
+    stop = toc ? follow(toc) : null;
+  };
+  document.addEventListener('astro:page-load', start);
+</script>
+
+<style>
+  .toc {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+  h2 {
+    margin: 0 0 8px;
+    padding: 0 8px;
+    font-weight: 400;
+  }
+  a {
+    display: flex;
+    gap: 10px;
+    align-items: baseline;
+    padding: 5px 8px;
+    border-radius: 6px;
+    color: var(--ash);
+    text-decoration: none;
+    font-size: 12.5px;
+    line-height: 1.4;
+    transition: color var(--quick) var(--ease);
+  }
+  a:hover {
+    color: var(--bone);
+  }
+  a.sub {
+    padding-left: 22px;
+    font-size: 12px;
+  }
+  i {
+    flex-shrink: 0;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--line);
+    transform: translateY(-1px);
+    transition: background var(--settle) var(--ease);
+  }
+  a:global(.on) {
+    color: var(--bone);
+  }
+  a:global(.on) i {
+    background: var(--sand);
+  }
+</style>
