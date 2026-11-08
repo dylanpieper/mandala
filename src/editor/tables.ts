@@ -6,6 +6,7 @@ import { redo, undo } from '@codemirror/commands';
 import { syntaxTree } from '@codemirror/language';
 import { StateField, type EditorState, type Range } from '@codemirror/state';
 import { Decoration, type DecorationSet, EditorView, WidgetType } from '@codemirror/view';
+import { modHeld } from '../lib/keys';
 
 type Align = 'left' | 'right' | 'center' | null;
 export interface Table {
@@ -47,6 +48,19 @@ export function tableMarkdown(t: Table): string {
 export function makeTable(cols: number, rows: number): string {
   const empty = () => Array<string>(cols).fill('');
   return tableMarkdown({ head: empty(), align: Array(cols).fill(null), rows: Array.from({ length: rows }, empty) });
+}
+
+/** The table without body row `r`. The header row stays. */
+export function removeRow(t: Table, r: number): Table {
+  if (r < 0 || r >= t.rows.length) return t;
+  return { ...t, rows: t.rows.filter((_, i) => i !== r) };
+}
+
+/** The table without column `c`, each other column keeping its alignment. The last column stays. */
+export function removeColumn(t: Table, c: number): Table {
+  if (t.head.length <= 1 || c < 0 || c >= t.head.length) return t;
+  const drop = <T>(xs: T[]) => xs.filter((_, i) => i !== c);
+  return { head: drop(t.head), align: drop(t.align), rows: t.rows.map(drop) };
 }
 
 /** Put an empty table at the caret, on lines of its own, with the caret in its first header cell. */
@@ -172,6 +186,64 @@ class TableWidget extends WidgetType {
       write(view, wrap, { ...t, rows: [...t.rows, t.head.map(() => '')] }, { r: t.rows.length, c: 0 });
     });
 
+    // Take out a row or a column: one quiet handle each, shown only for the
+    // row and the column under the pointer (or with the caret), at the row's
+    // left and above the column. The header row and a table's last column have none.
+    const cross = '<svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg>';
+    const handle = (cls: string, label: string, act: (at: number) => void) => {
+      const b = wrap.appendChild(document.createElement('button'));
+      b.className = `cm-table-del ${cls}`;
+      b.setAttribute('aria-label', label);
+      b.title = label;
+      b.tabIndex = -1;
+      b.innerHTML = cross;
+      b.addEventListener('mousedown', (e) => e.preventDefault());
+      b.addEventListener('click', () => {
+        const at = Number(b.dataset.at);
+        b.classList.remove('on');
+        act(at);
+      });
+      return b;
+    };
+    const delRow = handle('row', 'Remove this row', (r) => write(view, wrap, removeRow(now(), r)));
+    const delCol = handle('col', 'Remove this column', (c) => write(view, wrap, removeColumn(now(), c)));
+    // The handles go to the cell under the pointer, or else to the cell with
+    // the caret, so moving with the keys moves them too.
+    const place = (cell: HTMLElement) => {
+      const box = wrap.getBoundingClientRect();
+      const r = Number(cell.dataset.r);
+      const c = Number(cell.dataset.c);
+      const row = cell.parentElement!.getBoundingClientRect();
+      const col = cell.getBoundingClientRect();
+      delRow.classList.toggle('on', r >= 0);
+      delRow.dataset.at = String(r);
+      delRow.style.top = `${row.top - box.top + wrap.scrollTop + (row.height - 18) / 2}px`;
+      delCol.classList.toggle('on', now().head.length > 1);
+      delCol.dataset.at = String(c);
+      delCol.style.left = `${col.left - box.left + wrap.scrollLeft + (col.width - 18) / 2}px`;
+    };
+    const hide = () => {
+      delRow.classList.remove('on');
+      delCol.classList.remove('on');
+    };
+    const caretCell = () => (document.activeElement as HTMLElement | null)?.closest<HTMLElement>('[data-c]');
+    wrap.addEventListener('pointerover', (e) => {
+      const cell = (e.target as HTMLElement).closest<HTMLElement>('[data-c]');
+      if (cell) place(cell);
+    });
+    wrap.addEventListener('pointerleave', () => {
+      const cell = caretCell();
+      if (cell && wrap.contains(cell)) place(cell);
+      else hide();
+    });
+    wrap.addEventListener('focusin', (e) => {
+      const cell = (e.target as HTMLElement).closest<HTMLElement>('[data-c]');
+      if (cell) place(cell);
+    });
+    wrap.addEventListener('focusout', (e) => {
+      if (!wrap.contains(e.relatedTarget as Node | null) && !wrap.matches(':hover')) hide();
+    });
+
     wrap.addEventListener('input', () => write(view, wrap, now()));
     wrap.addEventListener('keydown', (e) => {
       const cell = (e.target as HTMLElement).closest<HTMLElement>('[data-c]');
@@ -180,7 +252,13 @@ class TableWidget extends WidgetType {
       const c = Number(cell.dataset.c);
       const t = now();
       const width = t.head.length;
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'z') {
+      if (modHeld(e) && e.shiftKey && e.key === 'Backspace') {
+        // ⌘⇧⌫ takes out the caret's row; the header row stays.
+        e.preventDefault();
+        if (r < 0) return;
+        const left = t.rows.length - 1;
+        write(view, wrap, removeRow(t, r), left > 0 ? { r: Math.min(r, left - 1), c } : { r: -1, c });
+      } else if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'z') {
         // Undo and redo are the note's, not the cell's.
         e.preventDefault();
         (e.shiftKey ? redo : undo)(view);
@@ -194,6 +272,18 @@ class TableWidget extends WidgetType {
         e.preventDefault();
         if (r + 1 >= t.rows.length) return write(view, wrap, { ...t, rows: [...t.rows, t.head.map(() => '')] }, { r: t.rows.length, c });
         focusCell(cellAt(wrap, r + 1, c));
+      } else if ((e.key === 'ArrowUp' || e.key === 'ArrowDown') && !e.shiftKey && !modHeld(e) && !e.altKey) {
+        // Up and down stay in the column. Past the header or the last row,
+        // the caret leaves the table to the line above or below it.
+        e.preventDefault();
+        e.stopPropagation();
+        const next = e.key === 'ArrowUp' ? r - 1 : r + 1;
+        if (next >= -1 && next < t.rows.length) return focusCell(cellAt(wrap, next, c));
+        const range = rangeOf(view, wrap);
+        view.focus();
+        if (!range) return;
+        const at = e.key === 'ArrowUp' ? Math.max(0, range.from - 1) : Math.min(view.state.doc.length, range.to + 1);
+        view.dispatch({ selection: { anchor: at }, scrollIntoView: true });
       } else if (e.key === 'Escape') {
         // Out of the table, to the line after it.
         e.preventDefault();

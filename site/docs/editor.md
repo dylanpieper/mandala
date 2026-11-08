@@ -77,12 +77,15 @@ A table is always drawn as a table, with each column's alignment. It is edited a
 - The widget updates its cells in place (`updateDOM`), so the cell being typed in keeps the caret.
 - A table is a block widget, so it comes from a state field, not the live-preview plugin.
 - A faint "+" at the right adds a column. One below the table adds a row.
-- Cells hold plain text. Rows and columns cannot be taken out from the table itself yet.
+- A small sand × takes out a row or a column. Only the row and the column under the pointer, or with the caret, show one: at the row's left, and above the column. They move with the arrow keys. The header row and a table's last column have none.
+- Cells hold plain text.
 
 Keys in a table:
 
 - Tab and Shift+Tab go to the next and previous cell. Tab in the last cell adds a row.
 - Enter goes to the cell below. In the bottom row, it adds a row.
+- ↑ and ↓ go to the cell above and below, in the same column. Past the header or the bottom row, they leave the table.
+- ⌘⇧⌫ takes out the caret's row. In the header row it does nothing.
 - Esc leaves the table.
 - ⌘Z and ⇧⌘Z undo and redo in the note.
 

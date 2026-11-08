@@ -44,7 +44,10 @@ export const theme = EditorView.theme(
     '.cm-code-last': { borderRadius: '0 0 8px 8px', paddingBottom: '8px !important' },
     '.cm-fence': { color: 'var(--dust)' },
     // Tables, drawn (`tables.ts`).
-    '.cm-table': { margin: '10px 0', padding: '0 22px 22px 0', position: 'relative', width: 'fit-content', maxWidth: '100%', overflowX: 'auto' },
+    // Room around the table for its handles: left for a row's, above for a
+    // column's, right and below for adding. The margins keep the table itself
+    // on the text's edge.
+    '.cm-table': { margin: '-10px 0 10px -22px', padding: '20px 22px 22px 22px', position: 'relative', width: 'fit-content', maxWidth: 'calc(100% + 22px)', overflowX: 'auto' },
     // The cell being written in: a frame inside it, clear of the shared borders, the same on all four sides.
     '.cm-table th:focus::after, .cm-table td:focus::after': {
       content: '""', position: 'absolute', inset: '2px', border: '1px solid var(--sand-line)', borderRadius: '3px', pointerEvents: 'none',
@@ -52,13 +55,23 @@ export const theme = EditorView.theme(
     // Add a column (right) or a row (below): faint until the table is hovered.
     '.cm-table-add': {
       position: 'absolute', width: '18px', height: '18px', padding: '0', border: '0', borderRadius: '9px',
-      display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: 'transparent', color: 'var(--dust)',
+      display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: 'transparent', color: 'var(--sand)',
       opacity: '0', transition: 'opacity var(--quick) var(--ease), background var(--quick) var(--ease)', cursor: 'pointer',
     },
     '.cm-table:hover .cm-table-add, .cm-table:focus-within .cm-table-add': { opacity: '1' },
-    '.cm-table-add:hover': { background: 'var(--hover)', color: 'var(--bone)' },
+    '.cm-table-add:hover': { background: 'var(--sand-ground)' },
     '.cm-table-add.col': { right: '0', top: '6px' },
-    '.cm-table-add.row': { left: '6px', bottom: '0' },
+    '.cm-table-add.row': { left: '28px', bottom: '0' },
+    // Take out the row or column under the pointer: shown only for that one.
+    '.cm-table-del': {
+      position: 'absolute', width: '18px', height: '18px', padding: '0', border: '0', borderRadius: '9px',
+      display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: 'transparent', color: 'var(--sand)',
+      opacity: '0', pointerEvents: 'none', transition: 'opacity var(--quick) var(--ease), background var(--quick) var(--ease), color var(--quick) var(--ease)', cursor: 'pointer',
+    },
+    '.cm-table-del.on': { opacity: '1', pointerEvents: 'auto' },
+    '.cm-table-del:hover': { background: 'var(--sand-ground)' },
+    '.cm-table-del.row': { left: '2px' },
+    '.cm-table-del.col': { top: '1px' },
     '.cm-table table': { borderCollapse: 'collapse', fontSize: '0.86em', lineHeight: '1.5' },
     // One rule for every cell: the key must not repeat, or the later one replaces it.
     '.cm-table th, .cm-table td': {
