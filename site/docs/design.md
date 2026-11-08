@@ -23,7 +23,9 @@ Where two things are compared (what came in, arranging), stone sits left, sand r
 - The hourglass at the left (`Hourglass.svelte`).
   - A click turns it. A faint pause button after the minutes pauses it, and the bells wait.
   - A hold opens its settings: work and rest minutes, volume, and Test.
-- The glyph and the vault's name in the middle, then the open note's folders. The name changes the vault (⌘O); the visit closes first, through the closing screen.
+- The glyph and the vault's name in the middle, then the open note's folders. The name opens a small menu: Show in Finder (File Explorer off a Mac), and Open another vault (⌘O).
+  - Another vault is chosen first. Cancelling, or choosing the same vault, changes nothing.
+  - Only a new folder ends the visit, through the closing screen. If it does not open, the choose screen offers the way back.
 - At the right: Mandala (⌘M), Search (⌘P), the help card (`?`), and the two pane toggles (stone ⌘[, sand ⌘]).
 - In a narrow window it gives way in steps.
   - Below 1100 px the shortcut labels hide; the help card still lists them.
