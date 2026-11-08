@@ -69,6 +69,17 @@ function targetAt(x: number, y: number): HTMLElement | null {
   return null;
 }
 
+/** The nearest target around `el` that takes what is lifted. */
+function outerTarget(el: HTMLElement): HTMLElement | null {
+  let up = el.parentElement;
+  while (up) {
+    const opts = targets.get(up);
+    if (opts && drag.item && opts.accepts(drag.item)) return up;
+    up = up.parentElement;
+  }
+  return null;
+}
+
 function mark(el: HTMLElement | null, y: number) {
   lastY = y;
   if (over !== el) {
@@ -132,8 +143,10 @@ export function draggable(node: HTMLElement, item: Lifted) {
     const found = dropIt ? targetAt(e.clientX, e.clientY) : null;
     const after = found?.classList.contains('drop-after') ?? false;
     const onto = !!found && found === over && drag.onto;
-    // A target that takes only drops onto it ignores a drop beside it.
-    const target = found && (onto || !targets.get(found)?.ontoOnly) ? found : null;
+    // A target that takes only drops onto it passes a drop beside it on to the
+    // target around it (a note in the sand rail, to the rail).
+    let target = found;
+    while (target && !onto && targets.get(target)?.ontoOnly) target = outerTarget(target);
     mark(null, 0);
     node.classList.remove('lifted');
     document.body.classList.remove('dragging');

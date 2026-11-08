@@ -5,6 +5,10 @@ All notable changes to Mandala. Versions follow [Semantic Versioning](https://se
 ## Unreleased
 
 - Drawings and pictures never land inside or under a table: they go where the caret was, with a blank line around them.
+- New note: a sand pill at the top of the sand rail with a menu of the five lifespans, and a lifespan card for ⌘N. Nothing is chosen for you; a held press makes the note.
+- The five lifespans sit in the note's header: the note's own is lit, and a held press on another changes it.
+- Drag a stone note onto the sand rail to return it to sand, with the lifespan you choose.
+
 
 ## 0.1.0 (2026-11-05)
 

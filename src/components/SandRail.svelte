@@ -1,9 +1,10 @@
 <script lang="ts">
   import { flip } from 'svelte/animate';
-  import { slide } from 'svelte/transition';
+  import { fly } from 'svelte/transition';
   import { drag, draggable, droppable, type Lifted } from '../lib/drag.svelte';
-  import { hold } from '../lib/hold';
   import { leavingSoon, timeLeft, timeShare } from '../lib/time';
+  import { LIVES } from '../lib/lives';
+  import { hold } from '../lib/hold';
   import Icon from './Icon.svelte';
   import LifeMark from './LifeMark.svelte';
   import type { Life, SandItem } from '../lib/types';
@@ -15,7 +16,7 @@
     now,
     onOpen,
     onNew,
-    onSetLife,
+    onReturn,
     onCombine,
   }: {
     sand: SandItem[];
@@ -23,25 +24,35 @@
     now: Date;
     onOpen: (rel: string) => void;
     onNew: (life: Life) => void;
-    /** A sand note dropped on another lifespan. */
-    onSetLife: (rel: string, life: Life) => void;
+    /** A stone note dropped anywhere on the rail: it returns to sand, once a lifespan is chosen. */
+    onReturn: (rel: string) => void;
     /** A note held on a sand note and dropped: combine `dragged` into `into`. */
     onCombine: (into: string, dragged: string) => void;
   } = $props();
 
-  let moonClicked = $state(false);
-  // While sand is lifted, the moons open so each lifespan can be a target.
-  const moonOpen = $derived(moonClicked || drag.item?.kind === 'sand');
+  // New note: a menu of the five lifespans, with none chosen for you. A held
+  // press on one makes the note.
+  let menu = $state(false);
+  let anchor = $state<HTMLElement | undefined>();
+  function pick(life: Life) {
+    menu = false;
+    onNew(life);
+  }
+  function outside(e: PointerEvent) {
+    if (menu && anchor && !anchor.contains(e.target as Node)) menu = false;
+  }
+  function menuKey(e: KeyboardEvent) {
+    if (menu && e.key === 'Escape') {
+      e.stopPropagation();
+      menu = false;
+    }
+  }
 
   // Sand is always soonest-to-leave first, so it is not reordered by hand; it
-  // drags onto a lifespan, onto stone, or onto another note to combine. Any other lifespan accepts a note: shorter ends sooner, longer starts the clock over.
-  function lifeTarget(life: Life) {
-    return {
-      accepts: (item: Lifted) => item.kind === 'sand' && !!item.life && item.life !== life,
-      drop: (item: Lifted) => onSetLife(item.rel, life),
-    };
-  }
-  const refuses = (life: Life) => drag.item?.kind === 'sand' && !lifeTarget(life).accepts(drag.item);
+  // drags onto stone, or onto another note to combine. Stone dropped anywhere
+  // here comes back to sand.
+  const stoneHere = { accepts: (item: Lifted) => item.kind === 'stone', drop: (item: Lifted) => onReturn(item.rel) };
+  const stoneLifted = $derived(drag.item?.kind === 'stone');
 
   // The open note is found in the rail: its row comes into view.
   let rail = $state<HTMLElement | undefined>();
@@ -53,7 +64,9 @@
   });
 </script>
 
-<aside class="rail" bind:this={rail} aria-label="Sand, notes that will dissolve">
+<svelte:window onpointerdown={outside} onkeydowncapture={menuKey} />
+
+<aside class="rail" class:taking={stoneLifted} bind:this={rail} aria-label="Sand, notes that will dissolve" use:droppable={stoneHere}>
   <header>
     <span class="mono count">{sand.length} drifting</span>
     <div class="name">
@@ -62,20 +75,23 @@
     </div>
   </header>
 
-  <div class="new" role="group" aria-label="New sand">
-    <button aria-label="Hold for a new breath, until you close" use:hold={{ done: () => onNew('breath') }} use:droppable={lifeTarget('breath')} class:refuse={refuses('breath')}><span>Breath</span><small class="mono life breath"><Icon name="breath" size={15} /></small></button>
-    <button aria-label="Hold for a new sun, 24 hours" use:hold={{ done: () => onNew('sun') }} use:droppable={lifeTarget('sun')} class:refuse={refuses('sun')}><span>Sun</span><small class="mono life sun"><Icon name="sun" size={15} />24h</small></button>
-    <button aria-expanded={moonOpen} onclick={() => (moonClicked = !moonClicked)}>
-      <span>Moon</span><small class="phases" aria-hidden="true"><Icon name="quarter" size={14} /><Icon name="half" size={14} /><Icon name="full" size={14} /></small>
+  <div class="new" bind:this={anchor}>
+    <button class="pill sand" aria-haspopup="menu" aria-expanded={menu} onclick={() => (menu = !menu)}>
+      <Icon name="plus" />New note<span class="chev" class:open={menu}><Icon name="next" size={14} /></span>
     </button>
+    {#if menu}
+      <div class="menu" role="menu" aria-label="Lifespan for the new note" transition:fly={{ y: -4, duration: 160 }}>
+        {#each LIVES as l (l.life)}
+          <button role="menuitem" aria-label="Hold for a new {l.name.toLowerCase()}, {l.long}" use:hold={{ done: () => pick(l.life) }}>
+            <span class="icon" style="color: var(--life-{l.tone})"><Icon name={l.life} size={16} /></span>
+            <span class="name">{l.name}</span>
+            <span class="mono time">{l.time}</span>
+          </button>
+        {/each}
+      </div>
+    {/if}
   </div>
-  {#if moonOpen}
-    <div class="moons" transition:slide={{ duration: 220 }}>
-      <button aria-label="Hold for a new quarter moon, 7 days" use:hold={{ done: () => onNew('quarter') }} use:droppable={lifeTarget('quarter')} class:refuse={refuses('quarter')}><Icon name="quarter" size={18} /><small class="mono">7d</small></button>
-      <button aria-label="Hold for a new half moon, 15 days" use:hold={{ done: () => onNew('half') }} use:droppable={lifeTarget('half')} class:refuse={refuses('half')}><Icon name="half" size={18} /><small class="mono">15d</small></button>
-      <button aria-label="Hold for a new full moon, 29 days" use:hold={{ done: () => onNew('full') }} use:droppable={lifeTarget('full')} class:refuse={refuses('full')}><Icon name="full" size={18} /><small class="mono">29d</small></button>
-    </div>
-  {/if}
+  {#if stoneLifted}<p class="hint mono" transition:fly={{ y: -4, duration: 160 }}>Drop to return to sand</p>{/if}
 
   <div class="list">
     {#each sand as s (s.rel)}
@@ -150,71 +166,82 @@
     font-size: 12px;
     color: var(--dust);
   }
-  .new {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 6px;
+  .rail {
+    transition: background var(--quick) var(--ease);
   }
-  .new button,
-  .moons button {
-    height: 44px;
-    border-radius: var(--radius);
+  .rail.taking {
+    background: var(--sand-ground);
+  }
+  .new {
+    position: relative;
+  }
+  .new > .pill {
+    width: 100%;
+    height: 36px;
+    justify-content: center;
+  }
+  .chev {
+    display: inline-flex;
+    margin-left: 2px;
+    transform: rotate(90deg);
+    transition: transform var(--quick) var(--ease);
+  }
+  .chev.open {
+    transform: rotate(-90deg);
+  }
+  .menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    z-index: 5;
+    padding: 6px;
+    background: var(--raised);
     border: 1px solid var(--line);
+    border-radius: 14px;
+    box-shadow: 0 14px 36px rgb(0 0 0 / 0.4);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .menu button {
+    height: 34px;
+    padding: 0 10px;
+    border: 0;
+    border-radius: 8px;
     background: transparent;
     color: var(--ash);
     display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: 1px;
+    gap: 10px;
     transition: background var(--quick) var(--ease), color var(--quick) var(--ease);
   }
-  .new button:hover,
-  .moons button:hover {
+  .menu button:hover,
+  .menu button:focus-visible {
     background: var(--hover);
     color: var(--bone);
+    outline: none;
   }
-  .new button.refuse,
-  .moons button.refuse {
-    opacity: 0.3;
-    transition: opacity var(--quick) var(--ease);
+  /* The held press fills in sand. */
+  .menu button:global(.holdable)::before {
+    background: var(--sand);
   }
-  small {
-    font-size: 11.5px;
-    opacity: 0.75;
-    white-space: nowrap;
+  .menu .icon {
+    display: inline-flex;
   }
-  .moons {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 6px;
+  .menu .name {
+    flex: 1;
+    text-align: left;
   }
-  .life {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    margin-top: 2px;
+  .menu .time {
+    font-size: 11px;
+    color: var(--dust);
   }
-  /* Each lifespan has its own faint color: a blue breath, a gold sun, a pale moon. */
-  .life.breath :global(svg) {
-    color: var(--life-breath);
-  }
-  .life.sun :global(svg) {
-    color: var(--life-sun);
-  }
-  .phases :global(svg),
-  .moons button :global(svg) {
-    color: var(--life-moon);
-  }
-  .phases {
-    display: flex;
-    gap: 3px;
-    margin-top: 2px;
-  }
-  .moons button {
-    height: 36px;
-    flex-direction: row;
-    gap: 6px;
+  .hint {
+    margin: 0;
+    text-align: center;
+    font-size: 11px;
+    color: var(--sand);
   }
   .list {
     display: flex;
