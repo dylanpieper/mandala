@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onDestroy, onMount } from 'svelte';
   import { createEditor, type EditorHandle } from '../editor/setup';
-  import { pictureChanged } from '../editor/pictures';
+  import { pictureChanged, placeBlock } from '../editor/pictures';
   import { endFind, find as findIn, findCount, step } from '../editor/find';
   import { insertTable } from '../editor/tables';
 
@@ -30,6 +30,9 @@
   let host: HTMLDivElement;
   let editor: EditorHandle | undefined;
   let loadedRel = '';
+  // Where the caret was when the editor last lost focus: a drawing is embedded
+  // there, after its sheet has taken the focus. Null for a note just loaded.
+  let lastCaret: number | null = null;
 
   onMount(() => {
     editor = createEditor(host, { text, noteTitles: () => titles, onExitTop: () => onExitTop(), onChange: (t) => onChange(t), onFollowLink: (t) => onFollowLink(t), onOpenDrawing: (n) => onOpenDrawing(n), onRemovePicture: (n) => onRemovePicture(n) });
@@ -41,20 +44,27 @@
     if (editor && rel !== loadedRel) {
       editor.load(text);
       loadedRel = rel;
+      lastCaret = null;
     }
   });
 
   onDestroy(() => editor?.destroy());
 
-  /** Put `![[name]]` on a line of its own at the caret (or the end). */
+  /** Put `![[name]]` in a block of its own where the caret is or last was (else at the end), never inside a table. */
   export function embed(name: string) {
     const view = editor?.view;
     if (!view) return;
-    const at = view.hasFocus ? view.state.selection.main.head : view.state.doc.length;
-    const line = view.state.doc.lineAt(at);
-    const before = at === line.from ? '' : '\n';
-    const insert = `${before}![[${name}]]\n`;
-    view.dispatch({ changes: { from: at, insert }, selection: { anchor: at + insert.length } });
+    const at = view.hasFocus ? view.state.selection.main.head : (lastCaret ?? view.state.doc.length);
+    const { from, insert, caret } = placeBlock(view.state, at, `![[${name}]]`);
+    view.dispatch({ changes: { from, insert }, selection: { anchor: caret } });
+  }
+
+  /** Remember the caret as focus leaves the editor. From a table cell it is the table's start, so the embed goes after the table. */
+  function rememberCaret(event: FocusEvent) {
+    const view = editor?.view;
+    if (!view || host.contains(event.relatedTarget as Node | null)) return;
+    const table = (event.target as HTMLElement | null)?.closest?.('.cm-table');
+    lastCaret = table ? view.posAtDOM(table) : view.state.selection.main.head;
   }
 
   /** Take every embed of picture `name` out of the note, and a line it leaves empty. */
@@ -123,7 +133,7 @@
   }
 </script>
 
-<div class="editor" bind:this={host}></div>
+<div class="editor" bind:this={host} onfocusout={rememberCaret}></div>
 
 <style>
   .editor {

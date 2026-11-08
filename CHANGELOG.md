@@ -2,6 +2,10 @@
 
 All notable changes to Mandala. Versions follow [Semantic Versioning](https://semver.org).
 
+## Unreleased
+
+- Drawings and pictures never land inside or under a table: they go where the caret was, with a blank line around them.
+
 ## 0.1.0 (2026-11-05)
 
 The first version, a preview.

@@ -4,7 +4,8 @@
 // A drawing (`.svg`) opens again for drawing on a click. No picture is ever
 // fetched from the network: a web address stays as text.
 
-import { Facet, StateEffect } from '@codemirror/state';
+import { Facet, StateEffect, type EditorState } from '@codemirror/state';
+import { ensureSyntaxTree, syntaxTree } from '@codemirror/language';
 import { EditorView, WidgetType } from '@codemirror/view';
 import { pictureUrl, savePicture } from '../lib/api';
 
@@ -109,6 +110,32 @@ export function stampedName(kind: string, ext: string, at = new Date()): string 
 
 const EXT: Record<string, string> = { 'image/png': 'png', 'image/jpeg': 'jpg', 'image/gif': 'gif', 'image/webp': 'webp', 'image/svg+xml': 'svg' };
 
+/**
+ * Where and what to insert so `block` (one or more embed lines) is a block of
+ * its own: a blank line before it unless it starts the note, and a blank line
+ * after it unless the note ends there. A caret inside a table moves to after
+ * the table, so an embed never splits a table or reads as one of its rows.
+ */
+export function placeBlock(state: EditorState, at: number, block: string): { from: number; insert: string; caret: number } {
+  const doc = state.doc;
+  let pos = Math.max(0, Math.min(at, doc.length));
+  const tree = ensureSyntaxTree(state, doc.length, 1000) ?? syntaxTree(state);
+  tree.iterate({
+    enter(n) {
+      if (n.name === 'Table') {
+        if (n.from < pos && pos <= n.to) pos = n.to;
+        return false;
+      }
+    },
+  });
+  const above = doc.sliceString(0, pos);
+  const below = doc.sliceString(pos);
+  const before = above === '' || above.endsWith('\n\n') ? '' : above.endsWith('\n') ? '\n' : '\n\n';
+  const after = below === '' ? '\n' : below.startsWith('\n\n') ? '' : below.startsWith('\n') ? '\n' : '\n\n';
+  const insert = `${before}${block}${after}`;
+  return { from: pos, insert, caret: pos + insert.length };
+}
+
 async function embedFiles(view: EditorView, files: File[], at: number) {
   const embeds: string[] = [];
   for (const f of files) {
@@ -118,11 +145,8 @@ async function embedFiles(view: EditorView, files: File[], at: number) {
     embeds.push(`![[${name}]]`);
   }
   if (!embeds.length) return;
-  const line = view.state.doc.lineAt(at);
-  // On a line of its own, so it is drawn as a block.
-  const before = at === line.from ? '' : '\n';
-  const insert = `${before}${embeds.join('\n')}\n`;
-  view.dispatch({ changes: { from: at, insert }, selection: { anchor: at + insert.length } });
+  const { from, insert, caret } = placeBlock(view.state, at, embeds.join('\n'));
+  view.dispatch({ changes: { from, insert }, selection: { anchor: caret } });
   view.focus();
 }
 
