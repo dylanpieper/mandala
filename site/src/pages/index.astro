@@ -4,7 +4,6 @@ import Site from '../layouts/Site.astro';
 import TopBar from '../components/TopBar.astro';
 import Logo from '../components/Logo.astro';
 import Teaser from '../components/Teaser.astro';
-import Icon from '../components/Icon.astro';
 import { readSource } from '../lib/docs';
 
 // Each button downloads its file from the release of the version in the root
@@ -23,18 +22,16 @@ const fine = ['Free · Works with .md files', 'Keep your Obsidian vault', 'No ac
     <Logo />
     <h1 class="serif">Every note is <em>sand</em>.<br />Keep what matters in <b>stone</b>.</h1>
     <div class="dl">
-      <a class="pill stone large mac" href={mac}><Icon name="next" size={16} class="down" />Download for macOS</a>
-      <a class="pill large windows" href={windows}><Icon name="next" size={16} class="down" />Download for Windows</a>
+      <a class="pill stone large mac" href={mac}>Download for macOS</a>
+      <a class="pill sand large windows" href={windows}>Download for Windows</a>
     </div>
     <script is:inline>
-      // On Windows, its button comes first and takes the stone. Runs before the
-      // first paint, so the buttons never change places on screen.
+      // On Windows, its button comes first. Runs before the first paint, so the
+      // buttons never change places on screen.
       (() => {
         const p = navigator.userAgentData?.platform || navigator.platform || '';
         if (!/win/i.test(p)) return;
         const dl = document.currentScript.previousElementSibling;
-        dl.querySelector('.mac').classList.remove('stone');
-        dl.querySelector('.windows').classList.add('stone');
         dl.prepend(dl.querySelector('.windows'));
       })();
     </script>
@@ -69,9 +66,6 @@ const fine = ['Free · Works with .md files', 'Keep your Obsidian vault', 'No ac
   .dl {
     display: flex;
     gap: 12px;
-  }
-  .dl :global(.down) {
-    transform: rotate(90deg);
   }
   .fine {
     margin: 16px 0 70px;
