@@ -7,17 +7,41 @@
   import Help from './Help.svelte';
   import Hourglass from './Hourglass.svelte';
   import Icon from './Icon.svelte';
-  import { key } from '../lib/keys';
+  import { fly } from 'svelte/transition';
+  import { isMac, key } from '../lib/keys';
+  import { revealFolder } from '../lib/api';
   import { panes, togglePane } from '../lib/panes.svelte';
 
   let {
     vaultName,
+    vaultRoot,
     crumbs,
     viewing,
     onChangeVault,
     onToggleMandala,
     onSearch,
-  }: { vaultName: string; crumbs: string[]; viewing: boolean; onChangeVault: () => void; onToggleMandala: () => void; onSearch: () => void } = $props();
+  }: { vaultName: string; vaultRoot: string; crumbs: string[]; viewing: boolean; onChangeVault: () => void; onToggleMandala: () => void; onSearch: () => void } = $props();
+
+  // The vault's name opens a small menu: show its folder in Finder (or File
+  // Explorer), or open another vault. The menu is fixed to the window, since
+  // the name's column clips what overflows it.
+  let menu = $state<{ x: number; y: number } | null>(null);
+  let vaultButton = $state<HTMLElement | undefined>();
+  const finder = isMac ? 'Finder' : 'File Explorer';
+  function toggleMenu() {
+    if (menu || !vaultButton) return void (menu = null);
+    const r = vaultButton.getBoundingClientRect();
+    menu = { x: r.left + r.width / 2, y: r.bottom + 6 };
+  }
+  function outside(e: PointerEvent) {
+    if (menu && !(e.target as HTMLElement).closest('.vault-menu, .vault')) menu = null;
+  }
+  function menuKey(e: KeyboardEvent) {
+    if (menu && e.key === 'Escape') {
+      e.stopPropagation();
+      menu = null;
+    }
+  }
 
   // The vault's name gives way when the title bar is too narrow for it beside
   // the hourglass and the actions: its column shrinks, and it fades rather
@@ -31,13 +55,15 @@
   }
 </script>
 
+<svelte:window onpointerdown={outside} onkeydowncapture={menuKey} />
+
 <header class="titlebar" data-tauri-drag-region="deep">
   <div class="start">
     <Hourglass />
   </div>
   <div class="crumbs" class:squeezed use:squeeze inert={squeezed}>
     <Glyph />
-    <button class="vault" title="Change vault {key('O')}" onclick={onChangeVault}>{vaultName}<Icon name="folder" size={14} /></button>
+    <button class="vault" bind:this={vaultButton} aria-haspopup="menu" aria-expanded={!!menu} onclick={toggleMenu}>{vaultName}<Icon name="folder" size={14} /></button>
     {#each crumbs as c}<span class="path"><span class="sep">/</span><span>{c}</span></span>{/each}
   </div>
   <div class="actions">
@@ -50,6 +76,13 @@
     </div>
   </div>
 </header>
+
+{#if menu}
+  <div class="vault-menu" role="menu" aria-label={vaultName} style="left: {menu.x}px; top: {menu.y}px" transition:fly={{ y: -4, duration: 160 }}>
+    <button role="menuitem" onclick={() => ((menu = null), revealFolder(vaultRoot))}><Icon name="folder" />Show in {finder}</button>
+    <button role="menuitem" onclick={() => ((menu = null), onChangeVault())}><Icon name="next" />Open another vault <span class="mono key">{key('O')}</span></button>
+  </div>
+{/if}
 
 <style>
   /* Off a Mac the window has its own title bar, so no room is kept for buttons. */
@@ -87,7 +120,45 @@
   .crumbs .path {
     display: contents;
   }
-  /* The vault's name changes the vault; its folder shows on hover. */
+  .vault-menu {
+    position: fixed;
+    z-index: 40;
+    transform: translateX(-50%);
+    padding: 6px;
+    background: var(--raised);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    box-shadow: 0 14px 36px rgb(0 0 0 / 0.4);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .vault-menu button {
+    height: 32px;
+    padding: 0 12px 0 10px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--ash);
+    font: inherit;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    white-space: nowrap;
+    transition: background var(--quick) var(--ease), color var(--quick) var(--ease);
+  }
+  .vault-menu button:hover,
+  .vault-menu button:focus-visible {
+    background: var(--hover);
+    color: var(--bone);
+    outline: none;
+  }
+  .vault-menu .key {
+    margin-left: auto;
+    padding-left: 12px;
+    color: var(--dust);
+  }
+  /* The vault's name opens its menu; its folder shows on hover. */
   .vault {
     display: inline-flex;
     align-items: center;

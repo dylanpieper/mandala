@@ -21,6 +21,10 @@
   // Closing ends the visit and quits or, when changing vaults, ends it and
   // goes back to choosing.
   let changing = $state(false);
+  // The folder to open once the closing screen ends this visit.
+  let next = $state<string | null>(null);
+  // The vault left behind, offered on the choose screen if the new one fails.
+  let previous = $state<{ name: string; root: string } | null>(null);
   let error = $state('');
 
   async function openVault(path: string) {
@@ -38,18 +42,34 @@
     if (path) await openVault(path);
   }
 
+  // The folder is chosen first. Cancelling, or choosing this same vault,
+  // changes nothing; only another folder ends the visit and opens it.
   async function changeVault() {
+    const path = await chooseFolder();
+    if (!path || !vault || path === vault.root) return;
     await leaving();
+    next = path;
+    previous = { name: vault.name, root: vault.root };
     before = screen;
     changing = true;
     screen = 'closing';
   }
 
-  function left() {
+  async function left() {
+    const path = next;
+    next = null;
     vault = null;
     changing = false;
     error = '';
-    screen = 'choose';
+    if (path) await openVault(path);
+    else screen = 'choose';
+  }
+
+  async function goBack() {
+    const to = previous;
+    previous = null;
+    error = '';
+    if (to) await openVault(to.root);
   }
 
   onMount(() => {
@@ -86,15 +106,15 @@
 {/if}
 
 {#if screen === 'choose'}
-  <Choose onChoose={choose} {error} />
+  <Choose onChoose={choose} {error} back={previous?.name ?? null} onBack={goBack} />
 {:else if screen === 'arrange' && vault}
   <Arrange root={vault.root} onDone={() => (screen = 'opening')} onChooseAnother={choose} />
 {:else if screen === 'opening'}
   <Opening onEnter={() => (screen = 'main')} />
 {:else if screen === 'main' && vault}
-  <Main vaultName={vault.name} onChangeVault={changeVault} />
+  <Main vaultName={vault.name} vaultRoot={vault.root} onChangeVault={changeVault} />
 {:else if screen === 'closing'}
-  <Closing onStay={() => ((changing = false), (screen = before))} onLeft={changing ? left : null} />
+  <Closing onStay={() => ((changing = false), (next = null), (screen = before))} onLeft={changing ? left : null} />
 {/if}
 
 <style>

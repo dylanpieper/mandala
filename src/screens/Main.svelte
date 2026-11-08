@@ -32,7 +32,7 @@
   /** A note's file name without its folder or `.md`. */
   const stemOf = (rel: string) => (rel.split('/').pop() ?? rel).replace(/\.md$/, '');
 
-  let { vaultName, onChangeVault }: { vaultName: string; onChangeVault: () => void } = $props();
+  let { vaultName, vaultRoot, onChangeVault }: { vaultName: string; vaultRoot: string; onChangeVault: () => void } = $props();
 
   async function changeVault() {
     await flush();
@@ -621,7 +621,7 @@
 
 <div class="window" class:ready>
   <div class="chrome bar-wrap" class:faded={faded('bar')} onpointerenter={() => wake('bar')} role="presentation">
-    <TitleBar {vaultName} {crumbs} {viewing} onChangeVault={changeVault} onToggleMandala={toggleMandala} onSearch={() => (searching = true)} />
+    <TitleBar {vaultName} {vaultRoot} {crumbs} {viewing} onChangeVault={changeVault} onToggleMandala={toggleMandala} onSearch={() => (searching = true)} />
   </div>
 
   <div class="body">

@@ -77,6 +77,13 @@ export async function chooseFolder(): Promise<string | null> {
   return typeof picked === 'string' ? picked : null;
 }
 
+/** Show a folder in Finder (or File Explorer), selected. Nothing in a plain browser. */
+export async function revealFolder(path: string): Promise<void> {
+  if (!isTauri) return;
+  const { revealItemInDir } = await import('@tauri-apps/plugin-opener');
+  await revealItemInDir(path);
+}
+
 /** Open a web or mail link in the person's default app. Other schemes are ignored. */
 export async function openLink(url: string): Promise<void> {
   const href = /^www\./i.test(url) ? `https://${url}` : url;
