@@ -9,6 +9,8 @@ All notable changes to Mandala. Versions follow [Semantic Versioning](https://se
 - The five lifespans sit in the note's header: the note's own is lit, and a held press on another changes it.
 - Drag a stone note onto the sand rail to return it to sand, with the lifespan you choose.
 - The note's header stays at the top of the page as the note scrolls.
+- Tables: take out a row or a column with the small sand × beside it, or the caret's row with ⌘⇧⌫. ⌘Z brings it back. The handles follow the caret, and ↑ and ↓ stay in the column.
+
 
 
 ## 0.1.0 (2026-11-05)

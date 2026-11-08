@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { makeTable, parseTable, tableMarkdown } from './tables';
+import { makeTable, parseTable, removeColumn, removeRow, tableMarkdown } from './tables';
 
 describe('tableMarkdown', () => {
   it('writes a table back, keeping alignment', () => {
@@ -52,5 +52,26 @@ describe('parseTable', () => {
 
   it('is null without a delimiter row', () => {
     expect(parseTable('| a |\n| b |')).toBeNull();
+  });
+});
+
+describe('removeRow and removeColumn', () => {
+  const t = parseTable('| Day | Minutes | Note |\n|:---|---:|:---:|\n| Mon | 20 | quiet |\n| Tue | 35 | rain |')!;
+  it('takes out one body row, keeping the header', () => {
+    expect(tableMarkdown(removeRow(t, 0))).toBe('| Day | Minutes | Note |\n| :--- | ---: | :---: |\n| Tue | 35 | rain |');
+  });
+  it('leaves the table as it is for the header row', () => {
+    expect(removeRow(t, -1)).toBe(t);
+  });
+  it('takes out one column, each other column keeping its alignment', () => {
+    expect(tableMarkdown(removeColumn(t, 1))).toBe('| Day | Note |\n| :--- | :---: |\n| Mon | quiet |\n| Tue | rain |');
+  });
+  it('keeps the last column', () => {
+    const one = parseTable('| A |\n| --- |\n| 1 |')!;
+    expect(removeColumn(one, 0)).toBe(one);
+  });
+  it('reads back after taking out every body row', () => {
+    const empty = removeRow(removeRow(t, 0), 0);
+    expect(parseTable(tableMarkdown(empty))).toEqual({ ...t, rows: [] });
   });
 });
