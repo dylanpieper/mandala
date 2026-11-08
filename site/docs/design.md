@@ -44,7 +44,7 @@ Where two things are compared (what came in, arranging), stone sits left, sand r
 ### The page
 
 - One centred column: 680 px, or 800 px when the page is at least 960 px wide.
-- The note's header (`NoteHead.svelte`).
+- The note's header (`NoteHead.svelte`). It stays at the top of the page as the note scrolls, so its actions are always in reach.
   - Sand: its life ring and time left, then the five lifespans with its own lit. A held press on another lifespan changes it (one second, as Let go): a shorter one ends no later than before, a longer one starts the clock over.
   - Stone: its carving (`Carving.svelte`), a chisel and the reason it is kept, in italic serif. With no reason the chisel is faint; a click turns it into a field.
   - Then the table button, the paintbrush (⌘D), Let go, and on sand, Set in stone (⌘↵).

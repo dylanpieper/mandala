@@ -755,10 +755,18 @@
   .bar-wrap {
     flex-shrink: 0;
   }
+  /* The note's header stays at the top of the page as the note scrolls, so
+     Let go and Set in stone are always in reach. */
   .head-wrap {
     width: 100%;
     display: flex;
     justify-content: center;
+    position: sticky;
+    top: -28px;
+    z-index: 3;
+    margin-top: -28px;
+    padding: 28px 0 12px;
+    background: linear-gradient(var(--ground) 82%, transparent);
   }
   .side.shut {
     width: 0;

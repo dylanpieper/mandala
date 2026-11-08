@@ -8,6 +8,7 @@ All notable changes to Mandala. Versions follow [Semantic Versioning](https://se
 - New note: a sand pill at the top of the sand rail with a menu of the five lifespans, and a lifespan card for ⌘N. Nothing is chosen for you; a held press makes the note.
 - The five lifespans sit in the note's header: the note's own is lit, and a held press on another changes it.
 - Drag a stone note onto the sand rail to return it to sand, with the lifespan you choose.
+- The note's header stays at the top of the page as the note scrolls.
 
 
 ## 0.1.0 (2026-11-05)
