@@ -18,7 +18,7 @@ export const REASON = 'remember the portugal coast';
 export const POEM_PATH = 'sand/sun/Low tide.md';
 
 export const SAND: SandNote[] = [
-  { id: 'list', title: 'eggs and potatoes', life: 'breath', left: null, span: 0 },
+  { id: 'list', title: 'random idea', life: 'breath', left: null, span: 0 },
   { id: 'movie', title: 'movie to watch tonight', life: 'sun', left: 6, span: 1440 },
   { id: 'ideas', title: 'mandala ideas', life: 'sun', left: 26, span: 1440, text: 'a rune for every kept note\nsand that blows away on its own' },
   { id: 'poem', title: 'Low tide', life: 'sun', left: 860, span: 1440, text: 'The sea leaves the shore\nits small bright things,\nand comes back for them.' },
