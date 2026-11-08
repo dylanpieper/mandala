@@ -141,13 +141,16 @@ As in other markdown editors: ⌘B bold, ⌘I italic, ⌘E code, ⌘⇧X striket
 - Pictures come from the core as raw bytes (`picture` command) and are kept as blob URLs (`pictureUrl` in `api.ts`).
 - A web address is never fetched. It stays as text.
 - Paste or drop an image: the core saves it in the attachment folder (`attach.rs`) as `Pasted <date> <time>.png`. The note gets `![[name]]` on a line of its own.
+- Every embed, pasted or drawn, is a block of its own (`placeBlock`).
+  - A blank line goes before it and after it, so it never joins a paragraph or a table. A line right under a table reads as a row.
+  - A caret inside a table moves to after the table.
 - Each picture in a note shows a small "Let go" pill on hover (`removeButton`). Held for a second, it lets go of the picture.
   - The embed leaves the text (`unembed`).
   - The file settles for a day (`remove_picture`).
 
 ## Drawing (`Draw.svelte`)
 
-Draw (the paintbrush in the note's header, or ⌘D) opens a sheet over the page. Done saves `Drawing <date> <time>.svg` and embeds it.
+Draw (the paintbrush in the note's header, or ⌘D) opens a sheet over the page. Done saves `Drawing <date> <time>.svg` and embeds it where the caret was when the sheet opened (`Editor.svelte` remembers it as focus leaves; from a table cell, after the table).
 
 - Each stroke is one `<path>`, so a click on a drawing opens it again to change.
 - A changed drawing gets a new version (`pictureChanged`), so the editor draws it again.
