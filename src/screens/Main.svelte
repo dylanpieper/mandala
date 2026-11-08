@@ -277,10 +277,15 @@
     }
   }
 
-  // ⌘N picks a lifespan in a small card: each press moves one longer, and
-  // letting go of ⌘ makes the note. Esc, or leaving the window, cancels.
-  const CYCLE: Life[] = ['breath', 'sun', 'quarter', 'half', 'full'];
-  let picking = $state<Life | null>(null);
+  // The lifespan card: for new sand (⌘N, or New note on an empty page), or for
+  // a stone note dropped on the sand rail. Nothing is chosen for the person.
+  let choosing = $state<{ kind: 'new' } | { kind: 'return'; rel: string } | null>(null);
+  function chose(life: Life) {
+    const c = choosing;
+    choosing = null;
+    if (c?.kind === 'new') newSand(life);
+    else if (c?.kind === 'return') returnToSand(c.rel, life);
+  }
   // Focus (⌘\): everything but the note fades. A faded part wakes when the
   // pointer comes to it, and sleeps again once writing goes on. The layout
   // stays as it was, so a part is found where it always is.
@@ -294,13 +299,6 @@
     if (awake.length) awake = [];
   }
 
-  function onKeyUp(e: KeyboardEvent) {
-    if (picking && !modHeld(e)) {
-      const life = picking;
-      picking = null;
-      newSand(life);
-    }
-  }
 
   async function newSand(life: Life) {
     const rel = await api.newSand(freshTitle(), life);
@@ -369,6 +367,14 @@
     const to = await api.setLife(rel, life);
     follow(rel, to);
     await refresh();
+  }
+
+  async function returnToSand(rel: string, life: Life) {
+    if (rel === selected) await flush();
+    const to = await api.returnToSand(rel, life);
+    follow(rel, to);
+    await refresh();
+    await open(to);
   }
 
   async function keepFromDrop(rel: string, folder: string) {
@@ -526,11 +532,7 @@
 
   function onKey(e: KeyboardEvent) {
     // The drawing and combine sheets have their own keys.
-    if (drawing || combining) return;
-    if (e.key === 'Escape' && picking) {
-      picking = null;
-      return;
-    }
+    if (drawing || combining || choosing) return;
     if (e.key === 'Escape' && viewing && !searching && !keeping) {
       viewing = false;
       return;
@@ -573,7 +575,7 @@
       changeVault();
     } else if (e.key === 'n') {
       e.preventDefault();
-      if (!e.repeat) picking = picking ? CYCLE[(CYCLE.indexOf(picking) + 1) % CYCLE.length] : CYCLE[0];
+      if (!e.repeat) choosing = { kind: 'new' };
     } else if (e.key === 'Enter' && sandNote && !keeping) {
       e.preventDefault();
       keeping = true;
@@ -613,9 +615,9 @@
   });
 </script>
 
-<svelte:window onkeydown={onKey} onkeyup={onKeyUp} onblur={() => (picking = null)} />
+<svelte:window onkeydown={onKey} />
 
-{#if picking}<LifePicker life={picking} />{/if}
+{#if choosing}<LifePicker heading={choosing.kind === 'new' ? 'New note' : 'Return to sand'} numbered={choosing.kind === 'new'} onPick={chose} onCancel={() => (choosing = null)} />{/if}
 
 <div class="window" class:ready>
   <div class="chrome bar-wrap" class:faded={faded('bar')} onpointerenter={() => wake('bar')} role="presentation">
@@ -636,7 +638,7 @@
           <FindBar bind:this={findBar} start={finding.start} onFind={(q) => editor?.find(q) ?? { at: 0, of: 0 }} onStep={(by) => editor?.findStep(by) ?? { at: 0, of: 0 }} onClose={endFind} />
         {/if}
         <div class="chrome head-wrap" class:faded={faded('head')} onpointerenter={() => wake('head')} role="presentation">
-          <NoteHead rel={selected} sand={sandNote} {now} onDraw={() => (drawing = { name: null })} onTable={(c, r) => editor?.table(c, r)} onLetGo={remove} onKeep={() => (keeping = true)} />
+          <NoteHead rel={selected} sand={sandNote} {now} onDraw={() => (drawing = { name: null })} onTable={(c, r) => editor?.table(c, r)} onLetGo={remove} onKeep={() => (keeping = true)} onSetLife={(life) => selected && setLife(selected, life)} />
         </div>
         <article>
           <!-- Back on the note: what woke in focus sleeps again. -->
@@ -667,7 +669,7 @@
         </article>
       {:else}
         <div class="empty">
-          <button class="pill sand" aria-label="Hold for new sand" use:hold={{ done: () => newSand('sun') }}><Icon name="plus" />New sand</button>
+          <button class="pill sand" onclick={() => (choosing = { kind: 'new' })}><Icon name="plus" />New note</button>
         </div>
       {/if}
 
@@ -695,7 +697,7 @@
     </main>
 
     <div class="side sand chrome" class:shut={!panes.sand} class:faded={faded('sand')} inert={!panes.sand} onpointerenter={() => wake('sand')} role="presentation">
-      <SandRail sand={overview.sand} {selected} {now} onOpen={open} onNew={newSand} onSetLife={setLife} onCombine={startCombine} />
+      <SandRail sand={overview.sand} {selected} {now} onOpen={open} onNew={newSand} onReturn={(rel) => (choosing = { kind: 'return', rel })} onCombine={startCombine} />
     </div>
 
     {#if viewing && picture}

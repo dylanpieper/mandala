@@ -43,6 +43,8 @@ export const api = {
   writeNote: (rel: string, text: string) => call<void>('write_note', { rel, text }),
   newSand: (title: string, life: Life) => call<string>('new_sand', { title, life }),
   setLife: (rel: string, life: Life) => call<string>('set_life', { rel, life }),
+  /** A stone note back to sand, beginning `life` now. Returns its new path. */
+  returnToSand: (rel: string, life: Life) => call<string>('return_to_sand', { rel, life }),
   moveStone: (rel: string, folder: string) => call<string>('move_stone', { rel, folder }),
   followHeading: (rel: string, opened: string) => call<Follow>('follow_heading', { rel, opened }),
   renameNote: (rel: string, stem: string) => call<Renamed>('rename_note', { rel, stem }),

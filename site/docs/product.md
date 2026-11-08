@@ -38,7 +38,7 @@ Mandala is a minimalist markdown notes app built around impermanence. It is Obsi
   - Written in Mandala, it leaves when you close.
   - Written on the phone, it shows under "What came in" at your next visit, and leaves when that visit ends.
 - Timed sand that runs out while Mandala is open is swept at that moment, even when its window is not in front. If the note is open, its page crumbles into sand. Its row leaves the rail, and a message offers Restore.
-- In Mandala, a shorter lifespan can only make a note end sooner. A longer one starts its clock again.
+- In Mandala, change a note's lifespan from the five in its header. A shorter one can only make the note end sooner; a longer one starts its clock again.
 - Moved anywhere else (in Obsidian on the phone, say), a note can only end sooner.
 - A loose note directly in `sand/` (or in an unknown subfolder) is a sun. One directly in `sand/moon/` is a full moon.
 
@@ -90,7 +90,7 @@ Mandala tries again the next time you finish the title or leave the note.
 - The reason shows as a **carving** above the stone note. Click it to change it. A stone note with no reason (arranged, or kept on the phone) shows a faint chisel; click to carve one.
 - In Mandala: hold **Set in stone** to open the dialog. Hold the ring (or ⌘↵) for three seconds: the note's rune, made from the reason, glows in and brightens, then is painted on. Let go early and the glow fades back.
 - On the phone: move the note into `stone/` in Obsidian. It is kept, with no reason. At the next arrival it shows in "What came in" under "Stone · kept", with the chisel to carve a reason there or later.
-- Stone can return to sand. It starts a new lifespan then.
+- Stone can return to sand: drag it onto the sand rail and choose a lifespan. Its clock starts then.
 
 ## Letting go and restoring
 

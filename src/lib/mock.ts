@@ -312,6 +312,14 @@ const handlers: Record<string, (a: any) => unknown> = {
     moved(rel, to);
     return to;
   },
+  return_to_sand: ({ rel, life }: { rel: string; life: Life }) => {
+    const to = `${FOLDER[life]}/${title(rel)}.md`;
+    notes.set(to, notes.get(rel) ?? '');
+    notes.delete(rel);
+    grains.set(to, { life, written: Date.now() });
+    moved(rel, to);
+    return to;
+  },
   keep: ({ rel, folder, because }) => {
     const to = `stone/${folder ? folder + '/' : ''}${title(rel)}.md`;
     if (because) carvings.set(to, { text: because, at: new Date().toISOString() });

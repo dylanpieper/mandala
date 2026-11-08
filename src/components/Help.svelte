@@ -9,7 +9,7 @@
   let root: HTMLDivElement;
 
   const keys = [
-    [key('N'), 'New sand'],
+    [key('N'), 'New note'],
     [key('P'), 'Search'],
     [key('F'), 'Find in note'],
     [key('M'), 'Mandala'],

@@ -223,6 +223,12 @@ fn set_life(state: State<App>, rel: String, life: Life) -> Res<String> {
     with(&state, |v| v.set_life(&rel, life, Utc::now()))
 }
 
+/// A stone note back to sand: it begins the chosen lifespan now.
+#[tauri::command]
+fn return_to_sand(state: State<App>, rel: String, life: Life) -> Res<String> {
+    with(&state, |v| v.return_to_sand(&rel, life, Utc::now()))
+}
+
 #[tauri::command]
 fn move_stone(state: State<App>, rel: String, folder: String) -> Res<String> {
     with(&state, |v| v.move_stone(&rel, &folder))
@@ -474,6 +480,7 @@ fn main() {
             write_note,
             new_sand,
             set_life,
+            return_to_sand,
             move_stone,
             set_order,
             keep,

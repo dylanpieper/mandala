@@ -35,7 +35,9 @@ Where two things are compared (what came in, arranging), stone sits left, sand r
 
 - Each rail is 260 px. Its pane toggle slides it out toward its edge. Which rails show is kept in localStorage.
 - The stone rail groups notes by folder. Folders collapse; the closed set is kept in localStorage.
+- The sand rail starts with **New note**, a sand pill. A click opens a menu of the five lifespans, with none chosen for you; a held press on one makes the note.
 - The sand rail lists sand soonest to leave first, so it is not reordered by hand.
+- A stone note dropped anywhere on the sand rail returns to sand. While stone is lifted, the rail is tinted sand and says "Drop to return to sand". The lifespan card asks how long it lasts.
 - The rails find the open note, however it was opened (search, a link, the mandala view, a new note). Its row scrolls into view, a closed folder holding it opens, and if it had to be found, it glows once in its rail's color (`lib/reveal.ts`). A hidden or faded rail stays as it is.
 - Below 900 px both rails hide and the page stays.
 
@@ -43,7 +45,8 @@ Where two things are compared (what came in, arranging), stone sits left, sand r
 
 - One centred column: 680 px, or 800 px when the page is at least 960 px wide.
 - The note's header (`NoteHead.svelte`).
-  - Sand: its life ring and time left. Stone: its carving (`Carving.svelte`), a chisel and the reason it is kept, in italic serif. With no reason the chisel is faint; a click turns it into a field.
+  - Sand: its life ring and time left, then the five lifespans with its own lit. A held press on another lifespan changes it (one second, as Let go): a shorter one ends no later than before, a longer one starts the clock over.
+  - Stone: its carving (`Carving.svelte`), a chisel and the reason it is kept, in italic serif. With no reason the chisel is faint; a click turns it into a field.
   - Then the table button, the paintbrush (⌘D), Let go, and on sand, Set in stone (⌘↵).
 - The title, in its own field drawn as the page's heading. Finishing it renames the note's file. A note with no heading (from Obsidian) shows its file name there as its title, and the title renames the file.
 - The note itself: live preview, find (⌘F), links, code, tables and pictures. See `site/docs/editor.md`.
@@ -75,7 +78,9 @@ Sheets and cards lie over the page on a dimmed, blurred ground. The page stays a
 - **The table picker** (`TablePicker.svelte`): a 6 by 6 grid under the table button. Its top row, in stone, is the header; the rows below, in sand, are the table's rows.
 - **Search** (⌘P) finds notes, and notes let go of in the last day, which it can restore. Each hit has a small tag beside its title: Stone, or Sand with its lifespan icon (`lib/place.ts`); a note outside the mandala has none.
 - **The help card**: the shortcuts, then one line with an icon for each thing Mandala does. No how-to: the controls show what to hold or drag.
-- **New sand from the keyboard** (`LifePicker.svelte`): ⌘N shows the five lifespans on Breath. Each ⌘N moves one longer, round. Letting go of ⌘ makes the note; Esc cancels.
+- **The lifespan card** (`LifePicker.svelte`): the five lifespans, with none chosen.
+  - It opens for a new note (⌘N, or New note on an empty page) and for a stone note dropped on the sand rail.
+  - A held press (or Enter held on the focused one) chooses. For a new note, the number keys 1 to 5 choose too, and each lifespan shows its number. Esc or a click outside cancels.
 - **The mandala view** (⌘M): stone as a lotus, sand drifting outward, links between notes.
   - Dust past the rim is what was let go today. A touch opens a card with its title, when it left, and its text.
   - Restore there is a hold. Back, Esc or a click outside closes the card.
@@ -96,7 +101,7 @@ Sheets and cards lie over the page on a dimmed, blurred ground. The page stays a
   - Strokes are never drawn as growing dashes: a round cap on a zero-length dash draws a stray dot.
 - **Drag to arrange** (`lib/drag.svelte.ts`, by pointer, not HTML5 drag and drop).
   - In the stone rail: reorder, or drop on another folder to move there.
-  - Sand onto another lifespan: shorter ends no later than before, longer starts the clock over.
+  - Stone onto the sand rail returns it to sand, once a lifespan is chosen.
   - Sand onto the stone rail opens the keep card with that folder chosen.
   - Rest a note on another for half a second and it glows: drop it there to combine the two.
   - The lifted note dims, a line shows where it lands, and lists move with `animate:flip`.
