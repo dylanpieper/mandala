@@ -7,6 +7,7 @@ import { TIMELINE, type Action } from './timeline';
 import { POEM_PATH, REASON, SAND, sorted, type SandNote } from './notes';
 
 const NARROW = '(max-width: 820px)';
+const COUNT = ['No breaths', 'One breath', 'Two breaths', 'Three breaths'];
 
 export function runTeaser(root: HTMLElement): () => void {
   const $ = <T extends Element = HTMLElement>(s: string) => root.querySelector<T>(s)!;
@@ -257,7 +258,40 @@ export function runTeaser(root: HTMLElement): () => void {
         .catch(() => fly.remove());
       later(300, () => closeUp('poem'));
     },
-    'fade-out': () => root.classList.add('fading'),
+    // Narrow: the page gives way to the two rails, through a short fade.
+    'show-rails': () => {
+      if (!narrow()) return root.classList.remove('note-first');
+      const cols = $('.cols');
+      const out = cols.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 240, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', fill: 'forwards' });
+      out.finished
+        .then(() => {
+          root.classList.remove('note-first');
+          cols.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 420, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' });
+          out.cancel();
+        })
+        .catch(() => {});
+    },
+    // As the app at closing: the visit's breaths are listed, Close is held,
+    // and they blur and fade as they leave.
+    'close-window': () => {
+      const breaths = notes.filter((n) => n.life === 'breath');
+      $('[data-closing-title]').textContent = `${COUNT[breaths.length] ?? `${breaths.length} breaths`} will leave with you`;
+      $('[data-closing-list]').replaceChildren(
+        ...breaths.map((n, i) => {
+          const li = document.createElement('li');
+          li.className = 'serif';
+          li.style.setProperty('--i', String(i));
+          li.textContent = n.title;
+          return li;
+        }),
+      );
+      root.classList.add('closed');
+    },
+    'hold-close': () => {
+      const fill = $('[data-close] .fill');
+      requestAnimationFrame(() => requestAnimationFrame(() => fill.classList.add('go')));
+    },
+    'breaths-leave': () => root.classList.add('leaving'),
     restart: () => start(),
   };
 
@@ -265,8 +299,15 @@ export function runTeaser(root: HTMLElement): () => void {
     timers.forEach(clearTimeout);
     timers = [];
     root.getAnimations({ subtree: true }).forEach((a) => a.cancel());
-    root.classList.remove('fading', 'keeping');
-    root.querySelectorAll('.go').forEach((e) => e.classList.remove('go'));
+    root.classList.remove('keeping', 'closed');
+    root.classList.add('note-first');
+    const closing = $('[data-closing]');
+    root.querySelectorAll('.go').forEach((e) => !closing.contains(e) && e.classList.remove('go'));
+    // The closing screen fades away first; only then is it made ready again.
+    later(900, () => {
+      root.classList.remove('leaving');
+      closing.querySelectorAll('.go').forEach((e) => e.classList.remove('go'));
+    });
     root.querySelectorAll('.hold').forEach((e) => e.remove());
     $('[data-card]').classList.remove('on');
     $('[data-toast]').classList.remove('on');

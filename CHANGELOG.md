@@ -10,7 +10,7 @@ All notable changes to Mandala. Versions follow [Semantic Versioning](https://se
 - Drag a stone note onto the sand rail to return it to sand, with the lifespan you choose.
 - The note's header stays at the top of the page as the note scrolls.
 - Tables: take out a row or a column with the small sand × beside it, or the caret's row with ⌘⇧⌫. ⌘Z brings it back. The handles follow the caret, and ↑ and ↓ stay in the column.
-
+- Site: on a phone the teaser opens on the note, then shows the rails; the loop ends with the closing screen letting a breath go.
 
 
 ## 0.1.0 (2026-11-05)
