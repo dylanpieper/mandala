@@ -5,7 +5,7 @@ import type { Life } from './types';
 export interface LifeInfo {
   life: Life;
   name: string;
-  /** Its length in short, or '' for a breath (it has no clock). */
+  /** Its length in short; a breath has no clock, so it is "Ephemeral", as elsewhere in the window. */
   time: string;
   /** Its length in words, for labels. */
   long: string;
@@ -14,7 +14,7 @@ export interface LifeInfo {
 }
 
 export const LIVES: LifeInfo[] = [
-  { life: 'breath', name: 'Breath', time: '', long: 'until you close', tone: 'breath' },
+  { life: 'breath', name: 'Breath', time: 'Ephemeral', long: 'until you close', tone: 'breath' },
   { life: 'sun', name: 'Sun', time: '24h', long: '24 hours', tone: 'sun' },
   { life: 'quarter', name: 'Quarter', time: '7d', long: '7 days', tone: 'moon' },
   { life: 'half', name: 'Half', time: '15d', long: '15 days', tone: 'moon' },
