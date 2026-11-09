@@ -1,6 +1,6 @@
 # Product
 
-Mandala is a minimalist markdown notes app built around impermanence. It is Obsidian's file model (a folder of markdown, `[[wikilinks]]`) with one change: **every note begins as sand and will dissolve, unless you keep it.**
+Mandala is a minimalist markdown notes app built around impermanence. It is Obsidian's file model with one change: **every note begins as sand and will dissolve, unless you keep it.**
 
 ## In short
 

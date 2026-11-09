@@ -6,7 +6,7 @@ How Mandala is built, the rules that hold everywhere, and how to run and check i
 
 **Mandala** is a desktop app for markdown notes that dissolve unless you keep them.
 
-- It runs on macOS. A Windows preview build exists, but it is not yet tested on Windows.
+- It runs on macOS and Windows.
 - It works directly on a vault folder of plain markdown (an Obsidian vault, say).
 - Notes come in from elsewhere: Obsidian on a phone, another editor, any sync tool. There is no Mandala phone app and no server.
 
