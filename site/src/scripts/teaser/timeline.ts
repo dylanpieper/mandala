@@ -1,7 +1,7 @@
 // The teaser's loop, in ms from its start: a poem is kept, then a note is let
 // go and another runs out, each on its own. Last, the window closes, and the
-// closing screen lets the breath go. In a narrow window the poem is written on
-// the page first, then the rails show. True to the app as it is now: sand lets
+// closing screen lets the breath go. In a narrow window the poem is written and
+// kept on the page, then the rails show. True to the app as it is now: sand lets
 // go when its time runs out or Let go is held; keeping opens the card, where
 // the rune glows in and is painted on; the rails never get sand; closing lets
 // the visit's breaths go with a held Close.

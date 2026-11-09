@@ -225,7 +225,7 @@ import { STONE } from '../scripts/teaser/notes';
     display: grid;
     grid-template-columns: 230px minmax(0, 1fr) 230px;
     height: calc(100% - 44px);
-    transition: opacity 800ms var(--ease);
+    transition: opacity calc(800ms * var(--pace, 1)) var(--ease);
   }
   .rail {
     background: var(--rail);
@@ -312,8 +312,8 @@ import { STONE } from '../scripts/teaser/notes';
     border-radius: 6px;
     color: var(--bone);
     transition:
-      background var(--settle) var(--ease),
-      color var(--settle) var(--ease);
+      background calc(var(--settle) * var(--pace, 1)) var(--ease),
+      color calc(var(--settle) * var(--pace, 1)) var(--ease);
   }
   .note.loose {
     padding-left: 8px;
@@ -349,7 +349,7 @@ import { STONE } from '../scripts/teaser/notes';
     flex-direction: column;
     gap: 6px;
     overflow: hidden;
-    transition: background var(--settle) var(--ease);
+    transition: background calc(var(--settle) * var(--pace, 1)) var(--ease);
   }
   .list :global(.grain.on) {
     background: var(--sand-ground);
@@ -376,7 +376,7 @@ import { STONE } from '../scripts/teaser/notes';
     height: 2px;
     margin-left: auto;
     background: var(--sand);
-    transition: width var(--settle) var(--ease);
+    transition: width calc(var(--settle) * var(--pace, 1)) var(--ease);
   }
   .list :global(.grain.low .b i) {
     background: var(--vermilion);
@@ -390,7 +390,7 @@ import { STONE } from '../scripts/teaser/notes';
   }
   .list :global(.hold.go) {
     width: 100%;
-    transition: width 1000ms linear;
+    transition: width calc(1000ms * var(--pace, 1)) linear;
   }
   .list :global(.hold.letgo) {
     background: rgb(162 156 146 / 0.16);
@@ -436,9 +436,9 @@ import { STONE } from '../scripts/teaser/notes';
     color: var(--dust);
     opacity: 0.55;
     transition:
-      color var(--quick) var(--ease),
-      background var(--quick) var(--ease),
-      opacity var(--quick) var(--ease);
+      color calc(var(--quick) * var(--pace, 1)) var(--ease),
+      background calc(var(--quick) * var(--pace, 1)) var(--ease),
+      opacity calc(var(--quick) * var(--pace, 1)) var(--ease);
   }
   .lives i.on {
     color: var(--tone);
@@ -471,7 +471,7 @@ import { STONE } from '../scripts/teaser/notes';
     background: rgb(14 13 16 / 0.6);
     opacity: 0;
     pointer-events: none;
-    transition: opacity var(--settle) var(--ease);
+    transition: opacity calc(var(--settle) * var(--pace, 1)) var(--ease);
   }
   .win:global(.keeping) .page::after {
     opacity: 1;
@@ -479,7 +479,7 @@ import { STONE } from '../scripts/teaser/notes';
   .do {
     display: flex;
     gap: 8px;
-    transition: opacity var(--settle) var(--ease);
+    transition: opacity calc(var(--settle) * var(--pace, 1)) var(--ease);
   }
   .do .pill {
     position: relative;
@@ -500,13 +500,13 @@ import { STONE } from '../scripts/teaser/notes';
   }
   .fill:global(.go) {
     width: 100%;
-    transition: width 1000ms linear;
+    transition: width calc(1000ms * var(--pace, 1)) linear;
   }
   article {
     max-width: 520px;
     margin: 0 auto;
     padding: 18px 24px;
-    transition: opacity 240ms var(--ease);
+    transition: opacity calc(240ms * var(--pace, 1)) var(--ease);
   }
   article h3 {
     margin: 0 0 18px;
@@ -528,7 +528,7 @@ import { STONE } from '../scripts/teaser/notes';
     margin-left: 1px;
     vertical-align: -2px;
     background: var(--sand);
-    animation: blink 1.1s steps(1) infinite;
+    animation: blink calc(1.1s * var(--pace, 1)) steps(1) infinite;
   }
   @keyframes blink {
     50% {
@@ -552,8 +552,8 @@ import { STONE } from '../scripts/teaser/notes';
     opacity: 0;
     transform: translate(-50%, 12px);
     transition:
-      opacity 320ms var(--ease),
-      transform 320ms var(--ease);
+      opacity calc(320ms * var(--pace, 1)) var(--ease),
+      transform calc(320ms * var(--pace, 1)) var(--ease);
   }
   .toast:global(.on) {
     opacity: 1;
@@ -584,8 +584,8 @@ import { STONE } from '../scripts/teaser/notes';
     transform: translate(-50%, -46%) scale(0.98);
     pointer-events: none;
     transition:
-      opacity var(--settle) var(--ease),
-      transform var(--settle) var(--ease);
+      opacity calc(var(--settle) * var(--pace, 1)) var(--ease),
+      transform calc(var(--settle) * var(--pace, 1)) var(--ease);
   }
   .card:global(.on) {
     opacity: 1;
@@ -624,7 +624,7 @@ import { STONE } from '../scripts/teaser/notes';
     stroke: var(--stone);
     stroke-width: 1.3;
     clip-path: inset(-20% 100% -20% -20%);
-    transition: clip-path 450ms var(--ease);
+    transition: clip-path calc(450ms * var(--pace, 1)) var(--ease);
   }
   .ring :global(.paint.painted) {
     clip-path: inset(-20% -20% -20% -20%);
@@ -651,7 +651,7 @@ import { STONE } from '../scripts/teaser/notes';
     background: var(--night);
     opacity: 0;
     pointer-events: none;
-    transition: opacity 800ms var(--ease);
+    transition: opacity calc(800ms * var(--pace, 1)) var(--ease);
   }
   .win:global(.closed) .closing {
     opacity: 1;
@@ -675,9 +675,9 @@ import { STONE } from '../scripts/teaser/notes';
     border-radius: 14px;
     font-size: 17px;
     transition:
-      opacity 900ms var(--ease) calc(var(--i) * 80ms),
-      letter-spacing 900ms var(--ease) calc(var(--i) * 80ms),
-      filter 900ms var(--ease) calc(var(--i) * 80ms);
+      opacity calc(900ms * var(--pace, 1)) var(--ease) calc(var(--i) * calc(80ms * var(--pace, 1))),
+      letter-spacing calc(900ms * var(--pace, 1)) var(--ease) calc(var(--i) * calc(80ms * var(--pace, 1))),
+      filter calc(900ms * var(--pace, 1)) var(--ease) calc(var(--i) * calc(80ms * var(--pace, 1)));
   }
   .win:global(.leaving) .closing :global(li) {
     opacity: 0;
@@ -686,7 +686,7 @@ import { STONE } from '../scripts/teaser/notes';
   }
   .closing h4,
   .leave {
-    transition: opacity 600ms var(--ease);
+    transition: opacity calc(600ms * var(--pace, 1)) var(--ease);
   }
   .win:global(.leaving) .closing h4,
   .win:global(.leaving) .leave {

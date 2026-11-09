@@ -7,6 +7,9 @@ import { TIMELINE, type Action } from './timeline';
 import { POEM_PATH, REASON, SAND, sorted, type SandNote } from './notes';
 
 const NARROW = '(max-width: 820px)';
+// On a phone the loop plays slower: the page and the rails take turns, so each
+// moment needs a little longer to be seen. Every beat and motion scales by it.
+const PACE_NARROW = 1.3;
 const COUNT = ['No breaths', 'One breath', 'Two breaths', 'Three breaths'];
 
 export function runTeaser(root: HTMLElement): () => void {
@@ -20,8 +23,9 @@ export function runTeaser(root: HTMLElement): () => void {
   let selected: string | null = null;
   let pendingEnd: Promise<() => void> | null = null;
   let running = false;
+  let pace = 1;
 
-  const later = (ms: number, f: () => void) => timers.push(window.setTimeout(f, ms));
+  const later = (ms: number, f: () => void) => timers.push(window.setTimeout(f, ms * pace));
   const narrow = () => matchMedia(NARROW).matches;
   const find = (id: string) => notes.find((n) => n.id === id)!;
   const rowOf = (id: string) => list.querySelector<HTMLElement>(`[data-id="${id}"]`);
@@ -81,7 +85,7 @@ export function runTeaser(root: HTMLElement): () => void {
     row.remove();
     rest.forEach((r, i) => {
       const dy = before[i] - r.getBoundingClientRect().top;
-      if (dy) r.animate([{ transform: `translateY(${dy}px)` }, { transform: 'none' }], { duration: 600, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' });
+      if (dy) r.animate([{ transform: `translateY(${dy}px)` }, { transform: 'none' }], { duration: 600 * pace, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' });
     });
     notes = notes.filter((n) => n.id !== id);
     paintAll();
@@ -118,8 +122,9 @@ export function runTeaser(root: HTMLElement): () => void {
     paintAll();
   }
 
+  // While only the page shows (a phone, before the rails), the pill on the page is held.
   function hold(kind: 'letgo' | 'keep', id: string) {
-    if (narrow()) {
+    if (narrow() && !root.classList.contains('note-first')) {
       const h = document.createElement('span');
       h.className = `hold ${kind === 'letgo' ? 'letgo' : ''}`;
       rowOf(id)?.append(h);
@@ -145,6 +150,55 @@ export function runTeaser(root: HTMLElement): () => void {
     p.setAttribute('class', cls);
     return p;
   };
+
+  function toStone() {
+    const row = rowOf('poem');
+    const landing = $('[data-landing]');
+    landing.classList.add('here');
+    landing.style.opacity = '0';
+    if (!row) return;
+    const from = row.getBoundingClientRect();
+    const to = landing.getBoundingClientRect();
+    const box = root.getBoundingClientRect();
+    const fly = document.createElement('div');
+    fly.textContent = 'Low tide';
+    Object.assign(fly.style, {
+      position: 'absolute',
+      left: `${from.left - box.left}px`,
+      top: `${from.top - box.top}px`,
+      width: `${to.width}px`,
+      padding: '6px 8px 6px 22px',
+      borderRadius: '6px',
+      background: 'var(--stone-ground)',
+      color: 'var(--stone)',
+      zIndex: '5',
+    });
+    root.append(fly);
+    row.style.visibility = 'hidden';
+    fly
+      .animate([{ transform: 'none' }, { transform: `translate(${to.left - from.left}px, ${to.top - from.top}px)` }], { duration: 900 * pace, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', fill: 'forwards' })
+      .finished.then(() => {
+        fly.remove();
+        landing.style.opacity = '';
+        landing.classList.add('on');
+        $('[data-kept]').textContent = '5 kept';
+      })
+      .catch(() => fly.remove());
+    later(300, () => closeUp('poem'));
+  }
+
+  // Narrow: the page gives way to the two rails, through a short fade.
+  function showRails() {
+    const cols = $('.cols');
+    const out = cols.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 240 * pace, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', fill: 'forwards' });
+    out.finished
+      .then(() => {
+        root.classList.remove('note-first');
+        cols.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 420 * pace, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' });
+        out.cancel();
+      })
+      .catch(() => {});
+  }
 
   const actions: Record<Action, () => void> = {
     'type-poem': () => open('poem', true),
@@ -203,7 +257,7 @@ export function runTeaser(root: HTMLElement): () => void {
       const start = performance.now();
       const step = (t: number) => {
         if (!running) return;
-        const k = Math.min(1, (t - start) / 3000);
+        const k = Math.min(1, (t - start) / (3000 * pace));
         ring.setAttribute('stroke-dasharray', `${(377 * k).toFixed(1)} 377`);
         (glow as unknown as HTMLElement).style.setProperty('--glow', String(k));
         if (k < 1) requestAnimationFrame(step);
@@ -222,54 +276,13 @@ export function runTeaser(root: HTMLElement): () => void {
       $('[data-carving]').hidden = false;
       $('[data-crumb]').textContent = 'stone';
       $('[data-crumb-sub]').textContent = 'poems';
+      // A phone kept the note on its page: now the rails show, for it to land in stone.
+      if (narrow()) showRails();
     },
-    'row-to-stone': () => {
-      const row = rowOf('poem');
-      const landing = $('[data-landing]');
-      landing.classList.add('here');
-      landing.style.opacity = '0';
-      if (!row) return;
-      const from = row.getBoundingClientRect();
-      const to = landing.getBoundingClientRect();
-      const box = root.getBoundingClientRect();
-      const fly = document.createElement('div');
-      fly.textContent = 'Low tide';
-      Object.assign(fly.style, {
-        position: 'absolute',
-        left: `${from.left - box.left}px`,
-        top: `${from.top - box.top}px`,
-        width: `${to.width}px`,
-        padding: '6px 8px 6px 22px',
-        borderRadius: '6px',
-        background: 'var(--stone-ground)',
-        color: 'var(--stone)',
-        zIndex: '5',
-      });
-      root.append(fly);
-      row.style.visibility = 'hidden';
-      fly
-        .animate([{ transform: 'none' }, { transform: `translate(${to.left - from.left}px, ${to.top - from.top}px)` }], { duration: 900, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', fill: 'forwards' })
-        .finished.then(() => {
-          fly.remove();
-          landing.style.opacity = '';
-          landing.classList.add('on');
-          $('[data-kept]').textContent = '5 kept';
-        })
-        .catch(() => fly.remove());
-      later(300, () => closeUp('poem'));
-    },
-    // Narrow: the page gives way to the two rails, through a short fade.
+    // On a phone it waits for the rails to fade in first.
+    'row-to-stone': () => (narrow() ? later(660, toStone) : toStone()),
     'show-rails': () => {
-      if (!narrow()) return root.classList.remove('note-first');
-      const cols = $('.cols');
-      const out = cols.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 240, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', fill: 'forwards' });
-      out.finished
-        .then(() => {
-          root.classList.remove('note-first');
-          cols.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 420, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' });
-          out.cancel();
-        })
-        .catch(() => {});
+      if (!narrow()) root.classList.remove('note-first');
     },
     // As the app at closing: the visit's breaths are listed, Close is held,
     // and they blur and fade as they leave.
@@ -323,6 +336,8 @@ export function runTeaser(root: HTMLElement): () => void {
 
   function start() {
     running = true;
+    pace = narrow() ? PACE_NARROW : 1;
+    root.style.setProperty('--pace', String(pace));
     reset();
     for (const b of TIMELINE) later(b.at, actions[b.do]);
   }
