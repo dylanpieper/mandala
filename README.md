@@ -2,7 +2,7 @@
 
 <h1 align="center">Mandala</h1>
 
-<p align="center"><em>Notes that dissolve in the sands of time, unless you turn them into stone.</em></p>
+<p align="center"><em>Notes dissolve into sand<br>Until you set them in stone</em></p>
 
 Mandala is a desktop app for macOS. A Windows preview is also available, not yet tested on Windows.
 
