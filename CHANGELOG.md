@@ -16,6 +16,7 @@ All notable changes to Mandala. Versions follow [Semantic Versioning](https://se
 - The open note keeps what you typed when its lifespan changes, or when it moves to another folder.
 - Hold a note's own lifespan to start its clock over. Each lifespan's title is only its name and time.
 - Focus: a faded rail wakes when the pointer comes near it, not only at the window's edge.
+- Lists: wrapped lines start under the item's text, numbers stay in sequence as items come and go, Tab and Shift+Tab move an item a level, and `1. ` or `- ` typed at the start of an item switches it between number and bullet.
 
 ## 0.1.0 (2026-11-05)
 

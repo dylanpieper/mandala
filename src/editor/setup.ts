@@ -6,6 +6,7 @@ import { languages } from '@codemirror/language-data';
 import { findField } from './find';
 import { formatKeys } from './format';
 import { tables } from './tables';
+import { listKeys, lists } from './lists';
 import { livePreview, onFollowLink } from './livePreview';
 import { onOpenDrawing, onRemovePicture, pictureEvents } from './pictures';
 import { highlight, theme } from './theme';
@@ -47,10 +48,13 @@ export function createEditor(
         ]),
         // Formatting first. ⌘[ and ⌘] are the rails, and ⌘I italic, so their defaults (indent, select syntax) are left out; Tab indents.
         keymap.of(formatKeys),
+        // On a list item, Tab and Shift+Tab move it a level; elsewhere they indent as before.
+        keymap.of(listKeys),
         keymap.of([...defaultKeymap.filter((k) => !['Mod-[', 'Mod-]', 'Mod-i'].includes(k.key ?? '')), ...historyKeymap, indentWithTab]),
         // Fenced code is highlighted by its language, each loaded from the bundle when first used.
         markdown({ base: markdownLanguage, codeLanguages: languages }),
         tables,
+        lists,
         EditorView.lineWrapping,
         EditorView.contentAttributes.of({ 'aria-label': 'Note', spellcheck: 'true' }),
         theme,
