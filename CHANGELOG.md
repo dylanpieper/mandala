@@ -17,7 +17,7 @@ All notable changes to Mandala. Versions follow [Semantic Versioning](https://se
 - Hold a note's own lifespan to start its clock over. Each lifespan's title is only its name and time.
 - Focus: a faded rail wakes when the pointer comes near it, not only at the window's edge.
 - Lists: wrapped lines start under the item's text, numbers stay in sequence as items come and go, Tab and Shift+Tab move an item a level, and `1. ` or `- ` typed at the start of an item switches it between number and bullet.
-- Site and README: "Notes dissolve into sand / Until you set them in stone".
+- Site and README: "Notes dissolve into sand / Unless you set them in stone".
 - Site: the teaser shows the app as it is now: the New note pill, the five lifespans in the header, Table and Draw, the stone rail's fold buttons, and the title bar's folders, help and pane toggles.
 - Site: on a phone the teaser plays slower, and Set in stone is held on the note's page before the rails show.
 
