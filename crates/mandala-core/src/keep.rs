@@ -45,13 +45,11 @@ impl Vault {
     /// of time: its clock starts over now (`restart`). `written` never changes.
     pub fn set_life(&self, rel: &str, life: Life, now: DateTime<Utc>) -> Result<String> {
         let Place::Sand(current) = place_of(rel) else { bail!("{rel} is not sand") };
-        if life == current {
-            return Ok(rel.to_string());
-        }
-        let to = self.move_into(rel, life.folder())?;
+        // The same lifespan, chosen again: its clock starts over, in place.
+        let to = if life == current { rel.to_string() } else { self.move_into(rel, life.folder())? };
         let mut clock = self.load_clock()?;
         if let Some(g) = clock.grains.remove(rel) {
-            let g = if life.rank() > current.rank() { g.restart(life, now) } else { g.relife(life) };
+            let g = if life.rank() >= current.rank() { g.restart(life, now) } else { g.relife(life) };
             clock.grains.insert(to.clone(), g);
         }
         self.reconcile(&mut clock, now)?;
@@ -210,6 +208,13 @@ mod tests {
         let later = now + Duration::minutes(5);
         let sun = f.vault.set_life(&breath, Life::Sun, later).unwrap();
         assert_eq!(f.vault.load_clock().unwrap().grains[&sun].dissolves, Some(later + Duration::hours(24)));
+
+        // The same lifespan again: it stays where it is, and its clock starts over.
+        let again = later + Duration::hours(5);
+        assert_eq!(f.vault.set_life(&sun, Life::Sun, again).unwrap(), sun);
+        let g = f.vault.load_clock().unwrap().grains[&sun].clone();
+        assert_eq!(g.started, Some(again));
+        assert_eq!(g.dissolves, Some(again + Duration::hours(24)));
     }
 
     #[test]

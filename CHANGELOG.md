@@ -14,6 +14,7 @@ All notable changes to Mandala. Versions follow [Semantic Versioning](https://se
 - Site: the macOS download is stone and the Windows download is sand, with no arrows.
 - The vault's name in the title bar opens a menu: Show in Finder (or File Explorer), and Open another vault. Cancelling the folder picker keeps your vault, and a vault that fails to open offers the way back.
 - The open note keeps what you typed when its lifespan changes, or when it moves to another folder.
+- Hold a note's own lifespan to start its clock over. Each lifespan's title is only its name and time.
 
 ## 0.1.0 (2026-11-05)
 

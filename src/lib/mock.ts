@@ -302,7 +302,10 @@ const handlers: Record<string, (a: any) => unknown> = {
   },
   set_life: ({ rel, life }: { rel: string; life: Life }) => {
     const from = grains.get(rel)!.life;
-    if (from === life) return rel;
+    if (from === life) {
+      grains.set(rel, { ...grains.get(rel)!, written: Date.now() });
+      return rel;
+    }
     const longer = LIVES.indexOf(life) > LIVES.indexOf(from);
     const to = `${FOLDER[life]}/${title(rel)}.md`;
     notes.set(to, notes.get(rel) ?? '');

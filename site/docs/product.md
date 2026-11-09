@@ -38,7 +38,7 @@ Mandala is a minimalist markdown notes app built around impermanence. It is Obsi
   - Written in Mandala, it leaves when you close.
   - Written on the phone, it shows under "What came in" at your next visit, and leaves when that visit ends.
 - Timed sand that runs out while Mandala is open is swept at that moment, even when its window is not in front. If the note is open, its page crumbles into sand. Its row leaves the rail, and a message offers Restore.
-- In Mandala, change a note's lifespan from the five in its header. A shorter one can only make the note end sooner; a longer one starts its clock again.
+- In Mandala, change a note's lifespan from the five in its header. A shorter one can only make the note end sooner. A longer one, or its own again, starts its clock over.
 - Moved anywhere else (in Obsidian on the phone, say), a note can only end sooner.
 - A loose note directly in `sand/` (or in an unknown subfolder) is a sun. One directly in `sand/moon/` is a full moon.
 
