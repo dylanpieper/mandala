@@ -60,7 +60,7 @@ Where two things are compared (what came in, arranging), stone sits left, sand r
 ⌘\ fades everything but the note.
 
 - The title bar, both rails, the note's header and "Linked from" fade out. The rails also slide away, and the column widens to 800 px.
-- A faded part comes back when the pointer reaches it. A thin strip at each window edge brings back its rail.
+- A faded part comes back when the pointer reaches it. The margin beside the note, up to 180 px from each window edge, brings back its rail.
 - It fades again when the pointer returns to the note, or when writing goes on.
 - ⌘\ again ends focus.
 
