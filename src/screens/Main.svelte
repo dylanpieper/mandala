@@ -342,6 +342,8 @@
 
   /** After a note moved: if it was open, it stays open under its new path. */
   function follow(from: string, to: string) {
+    // The same text under a new path: the editor keeps what is typed, and loads nothing.
+    if (selected === from && from !== to) editor?.renamed(to);
     if (selected === from) selected = to;
     // Sand already swept stays swept under the new path.
     if (swept.includes(from)) swept = [...swept, to];
