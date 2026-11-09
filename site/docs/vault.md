@@ -59,6 +59,7 @@ Obsidian hides folders that start with a dot, so `.mandala/` (and with it settli
 - `set_life` is a choice made in Mandala.
   - A shorter lifespan ends no later than before (`relife`).
   - A longer one starts the clock over now (`restart`, which sets `started`).
+  - The same one starts the clock over too, and the note does not move.
 - A move made in Obsidian goes through `reconcile` and `relife`, so it never extends.
 - `written` is always the real creation time. The clock counts from `started` when it is set.
 - `life` always equals the folder. `dissolves` is the clock start plus the duration.

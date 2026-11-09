@@ -1,7 +1,7 @@
 <script lang="ts">
   // Above the open note. Sand: its life ring and time left, then the five
-  // lifespans (its own lit; a held press on another changes it, since a longer
-  // one starts the clock over), then Table, Draw,
+  // lifespans (its own lit; a held press is needed, since it can start the
+  // clock over), then Table, Draw,
   // Let go and Set in stone. Stone: its carving, then Table, Draw and Let go.
   import { hold } from '../lib/hold';
   import { key } from '../lib/keys';
@@ -23,14 +23,6 @@
     onSetLife,
   }: { rel: string; sand: SandItem | undefined; now: Date; onDraw: () => void; onTable: (cols: number, rows: number) => void; onLetGo: () => void; onKeep: () => void; onSetLife: (life: Life) => void } = $props();
 
-  // What a held press on another lifespan does: a longer one starts the clock
-  // over, a shorter one ends the note no later than now.
-  const order = LIVES.map((l) => l.life);
-  function change(life: Life) {
-    if (!sand?.life) return '';
-    return order.indexOf(life) > order.indexOf(sand.life) ? 'starts its clock over' : 'can only end it sooner';
-  }
-
   // The table button's grid card is open.
   let tabling = $state(false);
 </script>
@@ -48,11 +40,11 @@
           <button
             role="radio"
             aria-checked={l.life === sand.life}
-            aria-label={l.life === sand.life ? `${l.name}, ${l.long}` : `Hold for ${l.name}: ${change(l.life)}`}
-            title={l.life === sand.life ? l.name : `Hold for ${l.name}: ${change(l.life)}`}
+            aria-label="{l.name}, {l.long}"
+            title="{l.name} · {l.long}"
             class:on={l.life === sand.life}
             style="--tone: var(--life-{l.tone})"
-            use:hold={{ done: () => l.life !== sand.life && onSetLife(l.life) }}><Icon name={l.life} size={15} /></button
+            use:hold={{ done: () => onSetLife(l.life) }}><Icon name={l.life} size={15} /></button
           >
         {/each}
       </div>
