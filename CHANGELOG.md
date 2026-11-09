@@ -18,6 +18,7 @@ All notable changes to Mandala. Versions follow [Semantic Versioning](https://se
 - Focus: a faded rail wakes when the pointer comes near it, not only at the window's edge.
 - Lists: wrapped lines start under the item's text, numbers stay in sequence as items come and go, Tab and Shift+Tab move an item a level, and `1. ` or `- ` typed at the start of an item switches it between number and bullet.
 - Site and README: "Notes dissolve into sand / Until you set them in stone".
+- Site: the teaser shows the app as it is now: the New note pill, the five lifespans in the header, Table and Draw, the stone rail's fold buttons, and the title bar's folders, help and pane toggles.
 
 ## 0.1.0 (2026-11-05)
 

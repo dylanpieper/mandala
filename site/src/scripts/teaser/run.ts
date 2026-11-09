@@ -94,11 +94,10 @@ export function runTeaser(root: HTMLElement): () => void {
     article.style.opacity = '1';
     $('[data-head]').style.opacity = '1';
     $('[data-title]').textContent = n.title;
-    $('[data-crumb-title]').textContent = n.title;
+    // The path's folders, as the app's title bar: the vault, then sand and its lifespan.
     $('[data-crumb]').textContent = 'sand';
-    const mark = $('[data-life-mark]');
-    mark.replaceChildren(iconOf(n.life));
-    mark.style.color = LIFE_COLOR[n.life];
+    $('[data-crumb-sub]').textContent = n.life === 'quarter' ? 'moon / quarter' : n.life;
+    root.querySelectorAll<HTMLElement>('[data-lives] [data-l]').forEach((el) => el.classList.toggle('on', el.dataset.l === n.life));
     $('[data-life]').hidden = false;
     $('[data-carving]').hidden = true;
     $('[data-do]').hidden = false;
@@ -221,7 +220,8 @@ export function runTeaser(root: HTMLElement): () => void {
       rune.replaceChildren(...strokes.map((d) => path(d, '')));
       $('[data-carving-text]').textContent = REASON;
       $('[data-carving]').hidden = false;
-      $('[data-crumb]').textContent = 'poems';
+      $('[data-crumb]').textContent = 'stone';
+      $('[data-crumb-sub]').textContent = 'poems';
     },
     'row-to-stone': () => {
       const row = rowOf('poem');

@@ -13,7 +13,8 @@ function load(): Map<string, string> {
   const blocks = new Map<string, string>();
   const re = /\{(?:#if|:else if) name === '([\w-]+)'\}([\s\S]*?)(?=\{:else|\{\/if\})/g;
   for (const m of text.matchAll(re)) {
-    blocks.set(m[1], m[2].replace(/<!--[\s\S]*?-->/g, '').trim());
+    // A nested `{#if on}` (the pane icons) is drawn as on: both rails show.
+    blocks.set(m[1], m[2].replace(/<!--[\s\S]*?-->/g, '').replace(/\{[#/:][^}]*\}/g, '').trim());
   }
   cache = blocks;
   return blocks;
