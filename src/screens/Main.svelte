@@ -813,11 +813,13 @@
       --measure: 800px;
     }
   }
+  /* A faded rail wakes when the pointer comes near where it was: most of the
+     margin beside the note, not only the window's edge. */
   .edge {
     position: absolute;
     top: 0;
     bottom: 0;
-    width: 16px;
+    width: clamp(16px, calc((100% - 800px) / 2 - 48px), 180px);
     z-index: 2;
   }
   .edge.left {
