@@ -124,8 +124,40 @@ As in other markdown editors: ⌘B bold, ⌘I italic, ⌘E code, ⌘⇧X striket
 - → steps over a whole closing mark at once (← over an opening one), so leaving bold takes one press. Only marks the syntax tree knows count.
 - These keys come before CodeMirror's own.
   - Its ⌘[ and ⌘] (indent) and ⌘I (select syntax) are left out, because the rails and italic use them.
-  - Tab still indents.
+  - Tab still indents. On a list item, it moves the item (see "Lists").
 - The title field has no formatting. It is plain text.
+
+## Lists (`lists.ts`)
+
+Bullets (`- `), numbers (`1. `) and tasks (`- [ ] `) work at every level, and they mix.
+
+Wrapped lines:
+
+- The wrapped lines of an item start under its text, not under its marker.
+- The marker's width is measured in the editor's font, as it shows.
+  - On the caret's line, the raw marker counts.
+  - On other lines, a task's checkbox counts.
+
+Keys and typing:
+
+- Enter continues the list with the next marker. Enter on an empty item ends the list or goes up a level.
+- Backspace just after a marker takes the marker away.
+  Both come from `@codemirror/lang-markdown` 6.5.2 (`markdown()` adds them).
+- Tab moves the item, with its children, under the text of the item before it.
+  On the first item of a list, Tab does nothing.
+- Shift+Tab moves the item back to the level of the item above it.
+- Type `1. ` at the start of a bullet item's text to make it a numbered item.
+  Type `- ` at the start of a numbered item's text to make it a bullet.
+
+Numbers:
+
+- After you type, delete, paste or move a level, each numbered list that the change touched counts up from its first item.
+  - The first number sets the start. Take out the first item, and the next item gets its number.
+  - A number that you type stays. The items after it count on from it.
+  - A numbered item that starts a list after Tab or Shift+Tab gets 1.
+- Each level and each list has its own numbers. A bullet between two numbered items makes two lists.
+- Opening a note does not change its numbers. Code blocks are never changed.
+- One ⌘Z takes back the change and the new numbers.
 
 ## Find in note (`find.ts`, `FindBar.svelte`)
 

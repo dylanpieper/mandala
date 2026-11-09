@@ -32,7 +32,7 @@ class CheckboxWidget extends WidgetType {
 }
 
 /** Lines that hold a selection or the caret, while the editor has focus: their syntax stays visible. */
-function activeLines(state: EditorState, focused: boolean): Set<number> {
+export function activeLines(state: EditorState, focused: boolean): Set<number> {
   const lines = new Set<number>();
   if (!focused) return lines;
   for (const r of state.selection.ranges) {
