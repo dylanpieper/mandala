@@ -2,7 +2,7 @@
 
 How to make a version of Mandala.
 Tested on macOS 26 with Tauri CLI 2.12.4, Node 23 and cargo-xwin 0.23.1.
-The Windows build is made on a Mac. It has not run on Windows yet.
+The Windows build is made on a Mac.
 
 ## The icon
 
@@ -89,7 +89,5 @@ The installer is `target/x86_64-pc-windows-msvc/release/bundle/nsis/Mandala_<ver
 - **Signing (Windows).**
   This needs a code-signing certificate.
   Until then, Windows SmartScreen warns before the installer runs.
-- **Testing on Windows.**
-  The installer is built, but it has not run on a Windows machine yet.
 - **Updates.**
   An updater needs the network, which Mandala otherwise never uses. Not decided.

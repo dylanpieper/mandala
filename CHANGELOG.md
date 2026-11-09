@@ -20,6 +20,7 @@ All notable changes to Mandala. Versions follow [Semantic Versioning](https://se
 - Site and README: "Notes dissolve into sand / Unless you set them in stone".
 - Site: the teaser shows the app as it is now: the New note pill, the five lifespans in the header, Table and Draw, the stone rail's fold buttons, and the title bar's folders, help and pane toggles.
 - Site: on a phone the teaser plays slower, and Set in stone is held on the note's page before the rails show.
+- README: a shorter opening, and Windows is no longer marked untested.
 
 ## 0.1.0 (2026-11-05)
 
