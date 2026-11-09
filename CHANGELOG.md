@@ -4,23 +4,35 @@ All notable changes to Mandala. Versions follow [Semantic Versioning](https://se
 
 ## Unreleased
 
-- Drawings and pictures never land inside or under a table: they go where the caret was, with a blank line around them.
+## 0.2.0 (2026-11-09)
+
+A preview: lifespans front and center, better lists and tables, and a fix for a note that seemed to lose its words.
+
+### Notes
+
 - New note: a sand pill at the top of the sand rail with a menu of the five lifespans, and a lifespan card for ⌘N. Nothing is chosen for you; a held press makes the note.
-- The five lifespans sit in the note's header: the note's own is lit, and a held press on another changes it.
+- The five lifespans sit in the note's header, its own lit. A held press on one changes it; a held press on its own starts its clock over. Each one's title is only its name and time.
 - Drag a stone note onto the sand rail to return it to sand, with the lifespan you choose.
+- Fixed: after a lifespan change, or a move to another folder, the open note showed the text it had when it was opened. Your words were safe on disk; now the page keeps them too.
+
+### The page
+
 - The note's header stays at the top of the page as the note scrolls.
-- Tables: take out a row or a column with the small sand × beside it, or the caret's row with ⌘⇧⌫. ⌘Z brings it back. The handles follow the caret, and ↑ and ↓ stay in the column.
-- Site: on a phone the teaser opens on the note, then shows the rails; the loop ends with the closing screen letting a breath go.
-- Site: the macOS download is stone and the Windows download is sand, with no arrows.
-- The vault's name in the title bar opens a menu: Show in Finder (or File Explorer), and Open another vault. Cancelling the folder picker keeps your vault, and a vault that fails to open offers the way back.
-- The open note keeps what you typed when its lifespan changes, or when it moves to another folder.
-- Hold a note's own lifespan to start its clock over. Each lifespan's title is only its name and time.
-- Focus: a faded rail wakes when the pointer comes near it, not only at the window's edge.
 - Lists: wrapped lines start under the item's text, numbers stay in sequence as items come and go, Tab and Shift+Tab move an item a level, and `1. ` or `- ` typed at the start of an item switches it between number and bullet.
-- Site and README: "Notes dissolve into sand / Unless you set them in stone".
-- Site: the teaser shows the app as it is now: the New note pill, the five lifespans in the header, Table and Draw, the stone rail's fold buttons, and the title bar's folders, help and pane toggles.
-- Site: on a phone the teaser plays slower, and Set in stone is held on the note's page before the rails show.
-- README: a shorter opening, and Windows is no longer marked untested.
+- Tables: take out a row or a column with the small sand × beside it, or the caret's row with ⌘⇧⌫. ⌘Z brings it back. The handles follow the caret, and ↑ and ↓ stay in the column.
+- Drawings and pictures never land inside or under a table: they go where the caret was, with a blank line around them.
+
+### The window
+
+- The vault's name in the title bar opens a menu: Show in Finder (or File Explorer), and Open another vault. Cancelling the folder picker keeps your vault, and a vault that fails to open offers the way back.
+- Focus: a faded rail wakes when the pointer comes near it, not only at the window's edge.
+
+### The site
+
+- "Notes dissolve into sand / Unless you set them in stone", on the site and in a shorter README.
+- The teaser shows the app as it is now. On a phone it opens on the note, plays slower, holds Set in stone on the page, then shows the rails; the loop ends with the closing screen letting a breath go.
+- The macOS download is stone and the Windows download is sand, with no arrows.
+- Windows is no longer marked untested.
 
 ## 0.1.0 (2026-11-05)
 
