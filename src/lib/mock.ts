@@ -189,16 +189,8 @@ const handlers: Record<string, (a: any) => unknown> = {
   arrive: (): Arrival => ({
     visit: 12,
     since: iso(now - 1.7 * DAY),
-    stone_changed: [
-      { rel: 'stone/Practice/Sitting log.md', title: 'Sitting log', life: null, written: null, dissolves: null },
-      { rel: 'stone/Reading/Ryōkan, poems.md', title: 'Ryōkan, poems', life: null, written: null, dissolves: null },
-    ],
-    kept_elsewhere: [{ rel: 'stone/Practice/Metta phrases.md', title: 'Metta phrases', life: null, written: null, dissolves: null }],
-    sand_new: ['sand/moon/quarter/Walking meditation route.md', 'sand/sun/Groceries, Saturday.md', 'sand/breath/Phone number for the framer.md'].map((r) => ref(r, grains.get(r)!)),
-    leaving: [
-      { rel: 'sand/sun/A worry about Monday.md', title: 'A worry about Monday', life: 'sun', written: iso(now - 2 * DAY), dissolves: iso(now - DAY) },
-      { rel: 'sand/breath/Dream, the flooded temple.md', title: 'Dream, the flooded temple', life: 'breath', written: iso(now - 2 * DAY), dissolves: null },
-    ],
+    // Two notes that ran out while Mandala was closed, settled on arrival.
+    left: [settle('sand/sun/A worry about Monday.md', 'swept'), settle('sand/breath/Dream, the flooded temple.md', 'swept')],
   }),
   overview: (): Overview => ({
     stone: byOrder([...notes.keys()].filter((r) => r.startsWith('stone/')).sort().map(note)),
@@ -337,7 +329,6 @@ const handlers: Record<string, (a: any) => unknown> = {
     if (text.trim()) carvings.set(rel, { text: text.trim(), at: new Date().toISOString() });
     else carvings.delete(rel);
   },
-  let_go: ({ rels }) => rels.map((r: string) => settle(r, 'swept')),
   sweep_ran_out: () =>
     [...grains]
       .filter(([, g]) => {
@@ -388,7 +379,6 @@ const handlers: Record<string, (a: any) => unknown> = {
     notes.set(into, text);
     return settle(dragged, 'combined');
   },
-  breaths: (): NoteRef[] => [...grains.entries()].filter(([, g]) => g.life === 'breath').map(([r, g]) => ref(r, g)),
   close_visit: () => {
     for (const [r, g] of [...grains.entries()]) if (g.life === 'breath') settle(r, 'swept');
   },

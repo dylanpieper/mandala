@@ -263,11 +263,6 @@ fn keep(state: State<App>, rel: String, folder: String, because: Option<String>)
 }
 
 #[tauri::command]
-fn let_go(state: State<App>, rels: Vec<String>) -> Res<Vec<Settled>> {
-    with(&state, |v| v.let_go(&rels, Utc::now()))
-}
-
-#[tauri::command]
 fn sweep_ran_out(state: State<App>) -> Res<Vec<Settled>> {
     with(&state, |v| {
         v.request_downloads()?;
@@ -389,20 +384,15 @@ fn combine(state: State<App>, into: String, dragged: String, text: String) -> Re
     with(&state, |v| v.combine(&into, &dragged, &text, Utc::now()))
 }
 
-#[tauri::command]
-fn breaths(state: State<App>) -> Res<Vec<NoteRef>> {
-    with(&state, |v| v.breaths(Utc::now()))
-}
-
-/// End the visit (breaths settle) and quit. If the breaths could not settle,
-/// stay open and say why: quitting anyway would leave the visit unclosed.
+/// End the visit (breaths settle) and quit. If the breaths cannot settle,
+/// quit all the same: the next arrival settles breaths from a visit that
+/// never closed (`visit.rs`).
 #[tauri::command]
 fn close_visit(app: AppHandle, state: State<App>) -> Res<()> {
     let open = state.vault.lock().map_err(|e| e.to_string())?.is_some();
     if open {
         if let Err(e) = with(&state, |v| v.close(Utc::now()).map(|_| ())) {
             eprintln!("close_visit failed: {e}");
-            return Err(e);
         }
     }
     app.exit(0);
@@ -457,8 +447,7 @@ fn main() {
     });
     let app = builder
         .on_window_event(|window, event| {
-            // Closing is a moment, not a click: the window shows the breaths
-            // that leave, then calls `close_visit`.
+            // The window saves and renames first (`lib/leaving.ts`), then calls `close_visit`.
             if let WindowEvent::CloseRequested { api, .. } = event {
                 api.prevent_close();
                 let _ = window.emit("close-requested", ());
@@ -484,7 +473,6 @@ fn main() {
             move_stone,
             set_order,
             keep,
-            let_go,
             sweep_ran_out,
             delete_note,
             restore,
@@ -499,7 +487,6 @@ fn main() {
             remove_picture,
             weave,
             combine,
-            breaths,
             close_visit,
             leave_vault,
         ])

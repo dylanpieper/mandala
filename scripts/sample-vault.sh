@@ -79,7 +79,7 @@ if [[ $arranged -eq 1 ]]; then
   ago 30 "sand/sun/A worry about Monday.md"
   # A sun written 24 hours less ten seconds ago: it runs out ten seconds after
   # this script ends. Open the vault within ten seconds to watch it let go on its
-  # own; open it later and it waits under "What's leaving".
+  # own; open it later and it settles as Mandala opens, named in one message.
   note "sand/sun/Drifts in ten seconds.md" "# Drifts in ten seconds\n\nWatch it go. Restore brings it back.\n"
   if date -v-1S >/dev/null 2>&1; then
     touch -t "$(date -v-86390S +%Y%m%d%H%M.%S)" "$dir/sand/sun/Drifts in ten seconds.md"

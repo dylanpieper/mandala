@@ -7,7 +7,7 @@ Mandala is a minimalist markdown notes app built around impermanence. It is Obsi
 - **Write.** A new note is sand. It has a lifespan, from a breath to a full moon.
 - **Keep what matters.** Hold a note to set it in stone, with a reason if you like. Stone stays.
 - **Let the rest go.** When its time runs out, sand is swept. It can still be restored for a day.
-- **Open Mandala to let time catch up.** Nothing happens while Mandala is closed. When you open it, you see what came in and what is leaving.
+- **Open Mandala to let time catch up.** Nothing happens while Mandala is closed. When you open it, what ran out settles, and one message says how many left, with Restore.
 
 ## Words
 
@@ -21,7 +21,7 @@ Mandala is a minimalist markdown notes app built around impermanence. It is Obsi
 | **Sweep** | A note leaving because its time ran out. |
 | **Settling** | The 24 hours after a note leaves, when it can still be restored. Never shown as a folder. |
 | **Visit** | One session of Mandala, from opening to closing. |
-| **Arrival** | The opening sequence. |
+| **Arrival** | The start of a visit, when time catches up. |
 
 ## Lifespans
 
@@ -36,7 +36,7 @@ Mandala is a minimalist markdown notes app built around impermanence. It is Obsi
 - Timed lifespans count from when the note was **written**, not from when Mandala first saw it. A note written on the phone on Monday is a Monday note.
 - A breath has no clock.
   - Written in Mandala, it leaves when you close.
-  - Written on the phone, it shows under "What came in" at your next visit, and leaves when that visit ends.
+  - Written on the phone, it leaves when your next visit ends.
 - Timed sand that runs out while Mandala is open is swept at that moment, even when its window is not in front. If the note is open, its page crumbles into sand. Its row leaves the rail, and a message offers Restore.
 - In Mandala, change a note's lifespan from the five in its header. A shorter one can only make the note end sooner. A longer one, or its own again, starts its clock over.
 - Moved anywhere else (in Obsidian on the phone, say), a note can only end sooner.
@@ -44,16 +44,12 @@ Mandala is a minimalist markdown notes app built around impermanence. It is Obsi
 
 ## Opening and closing
 
-While Mandala is closed, nothing happens to notes. So opening is when time catches up, and it is made into a moment:
+While Mandala is closed, nothing happens to notes. Opening is when time catches up, with no screens:
 
-1. **Arrive.** A slow breathing mandala, for at least one full breath (4 s). Mandala waits until sync has brought every note down, so nothing is swept from an old view.
-2. **What came in.** Stone changed and sand written elsewhere since the last visit, side by side (stone left, sand right).
-3. **What's leaving.** Sand that ran out while Mandala was closed. Each can be set in stone. A held **Open** lets the rest go and begins the visit; they blur and fade one after another.
-4. **Enter.**
-
-Each step stands on its own, centred. A step with nothing to show never appears, so a quiet day shows only the arrival. A day with nothing to sweep takes about five seconds. A week away becomes a real moment of letting go.
-
-**Closing** (window close or ⌘Q): if there are breaths, a screen lists them ("Two breaths will leave with you") with **Stay** and **Close**. Close is held, as letting go is. They fade as the window goes. Without breaths, Mandala simply closes.
+- **Opening** waits until sync has brought every note down, so nothing is swept from an old view. This is usually instant; a small turning glyph shows only if it is not.
+- Then the sand that ran out while Mandala was closed settles.
+- If notes left since your last visit, one message at the foot of the page says how many, for eight seconds: "3 notes left while you were away". **Restore** brings all of them back. Search (⌘P) restores one at a time.
+- **Closing** (window close or ⌘Q) saves, then quits. Breaths settle as Mandala closes, and the next opening names them in its message.
 
 ## First open
 
@@ -89,14 +85,14 @@ Mandala tries again the next time you finish the title or leave the note.
 - Only sand can be kept. Keeping moves the note to `stone/<folder>/` and records the reason in `.mandala/kept.jsonl`, never in the note.
 - The reason shows as a **carving** above the stone note. Click it to change it. A stone note with no reason (arranged, or kept on the phone) shows a faint chisel; click to carve one.
 - In Mandala: hold **Set in stone** to open the dialog. Hold the ring (or ⌘↵) for three seconds: the note's rune, made from the reason, glows in and brightens, then is painted on. Let go early and the glow fades back.
-- On the phone: move the note into `stone/` in Obsidian. It is kept, with no reason. At the next arrival it shows in "What came in" under "Stone · kept", with the chisel to carve a reason there or later.
+- On the phone: move the note into `stone/` in Obsidian. It is kept, with no reason. Its faint chisel waits for a reason, whenever you like.
 - Stone can return to sand: drag it onto the sand rail and choose a lifespan. Its clock starts then.
 
 ## Letting go and restoring
 
-A held **Let go** crumbles the open note's page into sand that blows away; then its row leaves the rail. Neither is final. The note leaves the vault at once (so it disappears from Obsidian too) and settles for 24 hours in `.mandala/settling/`. It can be restored from:
+A held **Let go** (or ⌥⌘⌫, held) crumbles the open note's page into sand that blows away; then its row leaves the rail. Neither is final. The note leaves the vault at once (so it disappears from Obsidian too) and settles for 24 hours in `.mandala/settling/`. It can be restored from:
 
-- the message that follows a let go, with **Restore**,
+- the message that follows a let go, or the one on opening, with **Restore**,
 - **search** (⌘P), where settled notes show faintly with **Restore**,
 - the **dust** past the mandala's rim (⌘M): touch it, then hold Restore.
 
