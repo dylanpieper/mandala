@@ -5,6 +5,4 @@ import { defineConfig } from 'astro/config';
 export default defineConfig({
   site: 'https://dylanpieper.github.io',
   base: '/mandala',
-  // The teaser imports the app's own code from ../src.
-  vite: { server: { fs: { allow: ['..'] } } },
 });

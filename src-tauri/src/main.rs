@@ -133,7 +133,7 @@ fn arrange_plan(state: State<App>) -> Res<Plan> {
 }
 
 #[tauri::command]
-fn arrange(app: AppHandle, state: State<App>, snapshot: bool, obsidian_to_sand: bool, only: Option<Vec<String>>) -> Res<()> {
+fn arrange(app: AppHandle, state: State<App>, snapshot: bool, only: Option<Vec<String>>) -> Res<()> {
     let snap = if snapshot {
         let stamp = Utc::now().format("%Y-%m-%d %H.%M").to_string();
         Some(app.path().app_data_dir().map_err(|e| e.to_string())?.join("snapshots").join(stamp))
@@ -145,7 +145,7 @@ fn arrange(app: AppHandle, state: State<App>, snapshot: bool, obsidian_to_sand: 
             Some(chosen) => v.arrange_plan_only(chosen)?,
             None => v.arrange_plan()?,
         };
-        v.arrange(&plan, snap.as_deref(), obsidian_to_sand)
+        v.arrange(&plan, snap.as_deref())
     })
 }
 
