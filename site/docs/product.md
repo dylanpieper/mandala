@@ -1,10 +1,10 @@
 # Product
 
-Mandala is a minimalist markdown notes app built around impermanence. It is Obsidian's file model with one change: **every note begins as sand and will dissolve, unless you keep it.**
+Mandala is a minimalist markdown notes app built around impermanence. It is Obsidian's file model with one change: **every note begins as sand and will dissolve, unless you keep it.** Think of sand as drafts: Mandala is draft-first, for people who write first, decide later, and dislike clutter. Most drafts go on their own; what earns its place you set in stone.
 
 ## In short
 
-- **Write.** A new note is sand. It has a lifespan, from a breath to a full moon.
+- **Write a draft.** A new note is sand: a draft with a lifespan, from a breath to a full moon.
 - **Keep what matters.** Hold a note to set it in stone, with a reason if you like. Stone stays.
 - **Let the rest go.** When its time runs out, sand is swept. It can still be restored for a day.
 - **Open Mandala to let time catch up.** Nothing happens while Mandala is closed. When you open it, what ran out settles, and one message says how many left, with Restore.
@@ -13,8 +13,8 @@ Mandala is a minimalist markdown notes app built around impermanence. It is Obsi
 
 | Word | Means |
 |---|---|
-| **Sand** | A note with a lifespan, in `sand/`. Everything new is sand. |
-| **Stone** | A kept note, in `stone/`. It never dissolves. |
+| **Sand** | A draft: a note with a lifespan, in `sand/`. Everything new is sand. |
+| **Stone** | A kept note, in `stone/`: a draft you decided to keep. It never dissolves. |
 | **Lifespan** | How long sand lasts: a breath, a sun, or a quarter, half or full moon. |
 | **Keep / set in stone** | Move a sand note into stone, deliberately: a three-second hold and an optional reason. |
 | **Let go** | A note leaving because the person held Let go. |

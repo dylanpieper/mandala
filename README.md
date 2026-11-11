@@ -4,7 +4,7 @@
 
 <p align="center"><em>Notes dissolve into sand<br>Unless you set them in stone</em></p>
 
-Mandala is a minimalist markdown notes app built around impermanence. It is Obsidian's file model with one change: every note begins as sand and will dissolve, unless you keep it.
+Mandala is a minimalist markdown notes app built around impermanence. It is Obsidian's file model with one change: every note begins as sand and will dissolve, unless you keep it. Think of sand as drafts: write first, and keep only what earns it.
 
 A note lasts a breath, a sun, or a quarter, half or full moon. To keep it, hold **Set in stone** and give a reason. Your notes stay plain files. Edit them anywhere, such as Obsidian on your phone.
 

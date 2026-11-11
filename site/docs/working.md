@@ -10,7 +10,7 @@ How Mandala is built, the rules that hold everywhere, and how to run and check i
 - It works directly on a vault folder of plain markdown (an Obsidian vault, say).
 - Notes come in from elsewhere: Obsidian on a phone, another editor, any sync tool. There is no Mandala phone app and no server.
 
-Every new note is **sand** with a lifespan. A note becomes **stone** only when someone deliberately keeps it. Mandala only runs when it is open, so opening it is when time catches up: what ran out while it was closed settles, and one message says so.
+Every new note is **sand** with a lifespan: a draft. A note becomes **stone** only when someone deliberately keeps it. Mandala only runs when it is open, so opening it is when time catches up: what ran out while it was closed settles, and one message says so.
 
 Stack: a Rust core (`crates/mandala-core`), a Tauri 2 shell (`src-tauri`), and a Svelte 5 window with a CodeMirror 6 live-preview editor (`src/`). No AI, no network, no accounts. The website (`site/`) is Astro 7.4 and holds these docs.
 
