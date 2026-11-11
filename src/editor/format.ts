@@ -94,12 +94,16 @@ function stepOver(forward: boolean) {
   };
 }
 
+/** The formatting commands by name, for the menu (`lib/menu.ts`). */
+export const formats = { bold: toggle('**'), italic: toggle('*'), code: toggle('`'), strike: toggle('~~'), link };
+export type Format = keyof typeof formats;
+
 export const formatKeys: KeyBinding[] = [
   { key: 'ArrowRight', run: stepOver(true) },
   { key: 'ArrowLeft', run: stepOver(false) },
-  { key: 'Mod-b', run: toggle('**'), preventDefault: true },
-  { key: 'Mod-i', run: toggle('*'), preventDefault: true },
-  { key: 'Mod-e', run: toggle('`'), preventDefault: true },
-  { key: 'Mod-Shift-x', run: toggle('~~'), preventDefault: true },
-  { key: 'Mod-k', run: link, preventDefault: true },
+  { key: 'Mod-b', run: formats.bold, preventDefault: true },
+  { key: 'Mod-i', run: formats.italic, preventDefault: true },
+  { key: 'Mod-e', run: formats.code, preventDefault: true },
+  { key: 'Mod-Shift-x', run: formats.strike, preventDefault: true },
+  { key: 'Mod-k', run: formats.link, preventDefault: true },
 ];

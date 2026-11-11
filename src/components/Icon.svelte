@@ -1,6 +1,6 @@
 <script lang="ts">
   // Stroke icons, drawn at 16 units. Add new ones here, never as emoji.
-  type Name = 'search' | 'stone' | 'wind' | 'bell' | 'plus' | 'back' | 'next' | 'check' | 'commit' | 'restore' | 'folder' | 'quarter' | 'half' | 'full' | 'mandala' | 'chevron' | 'collapse' | 'expand' | 'pane-left' | 'pane-right' | 'pause' | 'play' | 'both' | 'help' | 'carve' | 'draw' | 'eraser' | 'close' | 'text' | 'table' | 'pen' | 'brush' | 'marker' | 'pencil' | 'hourglass' | 'sand' | 'sun' | 'breath' | 'broom';
+  type Name = 'search' | 'stone' | 'wind' | 'bell' | 'plus' | 'back' | 'next' | 'check' | 'commit' | 'restore' | 'folder' | 'quarter' | 'half' | 'full' | 'mandala' | 'chevron' | 'collapse' | 'expand' | 'pane-left' | 'pane-right' | 'pause' | 'play' | 'both' | 'menu' | 'carve' | 'draw' | 'eraser' | 'close' | 'text' | 'table' | 'pen' | 'brush' | 'marker' | 'pencil' | 'hourglass' | 'sand' | 'sun' | 'breath' | 'broom';
   let { name, size = 16, on = false }: { name: Name; size?: number; on?: boolean } = $props();
 </script>
 
@@ -58,8 +58,8 @@
     {#if on}<rect x="10" y="3.6" width="3.4" height="8.8" rx="0.8" fill="currentColor" stroke="none" />{/if}
   {:else if name === 'both'}
     <rect x="2.5" y="4.5" width="7" height="9" rx="1.5" /><path d="M6.5 4.5V3.5c0-.6.4-1 1-1h5c.6 0 1 .4 1 1v7c0 .6-.4 1-1 1h-3" />
-  {:else if name === 'help'}
-    <circle cx="8" cy="8" r="6.5" /><path d="M6.2 6.2a1.9 1.9 0 0 1 3.6.8c0 1.2-1.8 1.6-1.8 2.8" /><path d="M8 11.8v.2" />
+  {:else if name === 'menu'}
+    <path d="M2.5 4.5h11M2.5 8h11M2.5 11.5h11" />
   {:else if name === 'carve'}
     <!-- A chisel on stone: the reason a note was kept. -->
     <path d="M2.5 13.5h11" /><path d="M5 11l6.5-6.5 1.5 1.5L6.5 12.5H5Z" /><path d="M10 6l1.5 1.5" />

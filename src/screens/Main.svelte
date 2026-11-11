@@ -11,6 +11,7 @@
   import DragGhost from '../components/DragGhost.svelte';
   import KeepDialog from '../components/KeepDialog.svelte';
   import Search from '../components/Search.svelte';
+  import LetGoHold from '../components/LetGoHold.svelte';
   import FindBar from '../components/FindBar.svelte';
   import SandRail from '../components/SandRail.svelte';
   import StoneRail from '../components/StoneRail.svelte';
@@ -18,13 +19,15 @@
   import { turn } from '../lib/timer.svelte';
   import { panes, togglePane } from '../lib/panes.svelte';
   import { api, isTauri, onEvent } from '../lib/api';
-  import { hold } from '../lib/hold';
+  import { hold, holdFill } from '../lib/hold';
   import SandFall from '../components/SandFall.svelte';
   import NoteHead from '../components/NoteHead.svelte';
   import Draw from '../components/Draw.svelte';
   import Combine from '../components/Combine.svelte';
   import LifePicker from '../components/LifePicker.svelte';
   import { isMac, modHeld } from '../lib/keys';
+  import { menuEnabled, type MenuAction } from '../lib/menu';
+  import { zoomBy } from '../lib/zoom';
   import { freshTitle, leavingSoon } from '../lib/time';
   import { crumble, type Tone } from '../lib/crumble';
   import type { Life, Mandala, Note, Overview, Renamed, SandItem, Settled } from '../lib/types';
@@ -532,6 +535,67 @@
     if (hit) open(hit.rel);
   }
 
+  // What the menu (☰) and the keys both do (`lib/menu.ts`).
+  const actions: Record<MenuAction, () => void> = {
+    new: () => (choosing = { kind: 'new' }),
+    search: () => (searching = true),
+    find: () => {
+      if (finding) findBar?.refocus();
+      else finding = { start: editor?.selection() ?? '' };
+    },
+    draw: () => (drawing = { name: null }),
+    keep: () => (keeping = true),
+    letGo: remove,
+    bold: () => editor?.format('bold'),
+    italic: () => editor?.format('italic'),
+    link: () => editor?.format('link'),
+    code: () => editor?.format('code'),
+    strike: () => editor?.format('strike'),
+    mandala: toggleMandala,
+    source: () => editor?.toggleSource(),
+    focus: () => {
+      awake = [];
+      focus = !focus;
+    },
+    stone: () => togglePane('stone'),
+    sand: () => togglePane('sand'),
+    hourglass: turn,
+    zoomIn: () => zoomBy(1),
+    zoomOut: () => zoomBy(-1),
+    vault: changeVault,
+  };
+  const enabled = (action: MenuAction) => menuEnabled(action, { open: !!selected, sand: !!sandNote && !keeping });
+  function act(action: MenuAction) {
+    if (enabled(action)) actions[action]();
+  }
+
+  // ⌥⌘⌫ held lets go of the open note, as the held Let go pill does. A card
+  // over the page fills while the keys are held, and drains if they let go early.
+  let letGoHold = $state<{ title: string; progress: number } | null>(null);
+  const letGoFill = holdFill({
+    draw: (progress, holding) => {
+      if (!letGoHold) return;
+      letGoHold = !holding && progress === 0 ? null : { ...letGoHold, progress };
+    },
+    done: () => {
+      letGoHold = null;
+      remove();
+    },
+  });
+  const isLetGoKey = (e: KeyboardEvent) => e.key === 'Backspace' && e.altKey && modHeld(e);
+  function letGoDown(e: KeyboardEvent) {
+    if (!isLetGoKey(e) || !selected || drawing || combining || choosing || keeping || searching) return;
+    // Before the editor, which would delete a word.
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.repeat || letGoFill.holding) return;
+    letGoHold = { title: noteTitle.trim() || stemOf(selected), progress: 0 };
+    letGoFill.press();
+  }
+  function letGoUp(e: KeyboardEvent) {
+    if (['Backspace', 'Alt', 'Meta', 'Control'].includes(e.key)) letGoFill.release();
+  }
+
   function onKey(e: KeyboardEvent) {
     // The drawing and combine sheets have their own keys.
     if (drawing || combining || choosing) return;
@@ -547,40 +611,27 @@
       return;
     }
     // ⌘B, ⌘I, ⌘K, ⌘E and ⌘⇧X are the editor's formatting keys (`editor/format.ts`).
-    if (e.key === '[' || e.key === ']') {
-      // Left bracket, left rail; right bracket, right rail.
-      e.preventDefault();
-      togglePane(e.key === '[' ? 'stone' : 'sand');
-    } else if (e.key === 't') {
-      e.preventDefault();
-      turn();
-    } else if (e.key === 'p') {
-      e.preventDefault();
-      searching = true;
-    } else if (e.key === 'f' && selected) {
-      e.preventDefault();
-      if (finding) findBar?.refocus();
-      else finding = { start: editor?.selection() ?? '' };
-    } else if (e.key === 'g' && finding) {
+    const action: MenuAction | null =
+      e.key === '[' ? 'stone'
+      : e.key === ']' ? 'sand'
+      : e.key === 't' ? 'hourglass'
+      : e.key === 'p' ? 'search'
+      : e.key === 'f' && selected ? 'find'
+      : e.key === 'd' && selected ? 'draw'
+      : e.key === '/' && selected ? 'source'
+      : e.key === '\\' ? 'focus'
+      : e.key === 'o' ? 'vault'
+      : e.key === 'n' ? 'new'
+      : e.key === 'Enter' && sandNote && !keeping ? 'keep'
+      : null;
+    if (e.key === 'g' && finding) {
       e.preventDefault();
       editor?.findStep(e.shiftKey ? -1 : 1);
-    } else if (e.key === 'd' && selected) {
+    } else if (action) {
       e.preventDefault();
-      drawing = { name: null };
-    } else if (e.key === '\\') {
-      e.preventDefault();
-      if (e.repeat) return;
-      awake = [];
-      focus = !focus;
-    } else if (e.key === 'o') {
-      e.preventDefault();
-      changeVault();
-    } else if (e.key === 'n') {
-      e.preventDefault();
-      if (!e.repeat) choosing = { kind: 'new' };
-    } else if (e.key === 'Enter' && sandNote && !keeping) {
-      e.preventDefault();
-      keeping = true;
+      // Held keys act once: focus and new note would flicker.
+      if (e.repeat && (action === 'focus' || action === 'new')) return;
+      act(action);
     }
   }
 
@@ -619,13 +670,13 @@
   });
 </script>
 
-<svelte:window onkeydown={onKey} />
+<svelte:window onkeydown={onKey} onkeydowncapture={letGoDown} onkeyupcapture={letGoUp} onblur={() => letGoFill.release()} />
 
 {#if choosing}<LifePicker heading={choosing.kind === 'new' ? 'New note' : 'Return to sand'} numbered={choosing.kind === 'new'} onPick={chose} onCancel={() => (choosing = null)} />{/if}
 
 <div class="window" class:ready>
   <div class="chrome bar-wrap" class:faded={faded('bar')} onpointerenter={() => wake('bar')} role="presentation">
-    <TitleBar {vaultName} {vaultRoot} {crumbs} {viewing} onChangeVault={changeVault} onToggleMandala={toggleMandala} onSearch={() => (searching = true)} />
+    <TitleBar {vaultName} {vaultRoot} {crumbs} {viewing} onChangeVault={changeVault} onToggleMandala={toggleMandala} onSearch={() => (searching = true)} run={act} {enabled} />
   </div>
 
   <div class="body">
@@ -638,11 +689,15 @@
 
     <main bind:this={page} class:wide={faded('stone') && faded('sand')}>
       {#if selected}
-        {#if finding}
-          <FindBar bind:this={findBar} start={finding.start} onFind={(q) => editor?.find(q) ?? { at: 0, of: 0 }} onStep={(by) => editor?.findStep(by) ?? { at: 0, of: 0 }} onClose={endFind} />
-        {/if}
-        <div class="chrome head-wrap" class:faded={faded('head')} onpointerenter={() => wake('head')} role="presentation">
-          <NoteHead rel={selected} sand={sandNote} {now} onDraw={() => (drawing = { name: null })} onTable={(c, r) => editor?.table(c, r)} onLetGo={remove} onKeep={() => (keeping = true)} onSetLife={(life) => selected && setLife(selected, life)} />
+        <!-- The header and find stay at the top together. Find hangs under the
+             header, so it never covers its tools, and stays when focus fades it. -->
+        <div class="top">
+          <div class="chrome head-wrap" class:faded={faded('head')} onpointerenter={() => wake('head')} role="presentation">
+            <NoteHead rel={selected} sand={sandNote} {now} onDraw={() => (drawing = { name: null })} onTable={(c, r) => editor?.table(c, r)} onLetGo={remove} onKeep={() => (keeping = true)} onSetLife={(life) => selected && setLife(selected, life)} />
+          </div>
+          {#if finding}
+            <FindBar bind:this={findBar} start={finding.start} onFind={(q) => editor?.find(q) ?? { at: 0, of: 0 }} onStep={(by) => editor?.findStep(by) ?? { at: 0, of: 0 }} onClose={endFind} />
+          {/if}
         </div>
         <article>
           <!-- Back on the note: what woke in focus sleeps again. -->
@@ -690,6 +745,10 @@
 
       {#if combining}
         <Combine into={combining.into} dragged={combining.dragged} onCancel={() => (combining = null)} onDone={combined} />
+      {/if}
+
+      {#if letGoHold}
+        <LetGoHold title={letGoHold.title} progress={letGoHold.progress} />
       {/if}
 
       {#if toast}
@@ -761,14 +820,17 @@
   }
   /* The note's header stays at the top of the page as the note scrolls, so
      Let go and Set in stone are always in reach. */
-  .head-wrap {
+  .top {
     width: 100%;
-    display: flex;
-    justify-content: center;
     position: sticky;
     top: -28px;
     z-index: 3;
     margin-top: -28px;
+  }
+  .head-wrap {
+    width: 100%;
+    display: flex;
+    justify-content: center;
     padding: 28px 0 12px;
     background: linear-gradient(var(--ground) 82%, transparent);
   }
@@ -811,7 +873,7 @@
   }
   @container (min-width: 960px) {
     article,
-    .head-wrap {
+    .top {
       --measure: 800px;
     }
   }
