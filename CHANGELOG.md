@@ -4,6 +4,10 @@ All notable changes to Mandala. Versions follow [Semantic Versioning](https://se
 
 ## Unreleased
 
+### The page
+
+- Fixed: find in note (⌘F) covered the note's header tools. It now sits below the header.
+
 ## 0.2.0 (2026-11-09)
 
 A preview: lifespans front and center, better lists and tables, and a fix for a note that seemed to lose its words.

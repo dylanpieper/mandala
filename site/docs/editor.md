@@ -161,7 +161,7 @@ Numbers:
 
 ## Find in note (`find.ts`, `FindBar.svelte`)
 
-⌘F opens a bar at the top right of the page, filled with the selected text.
+⌘F opens a bar under the note's header, at the right of the note, filled with the selected text.
 
 - Every match is marked faintly, and the current one plainly.
 - Case is ignored. The text is plain, not a pattern.
@@ -169,6 +169,8 @@ Numbers:
 - Esc closes the bar and selects the current match in the note.
 - Opening another note closes the bar.
 - The bar has no height in the page, so the note does not move when it opens.
+- It stays under the header as the note scrolls, and never covers the header's tools. Focus does not fade it.
+- In a narrow note the field shrinks, and the count stays on one line.
 
 ## Pictures (`pictures.ts`)
 
