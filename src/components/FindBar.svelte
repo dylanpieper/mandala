@@ -44,7 +44,8 @@
   }
 </script>
 
-<!-- A dock of no height, so the page does not move when the bar opens. -->
+<!-- A dock of no height under the note's header, as wide as the note, so the
+     page does not move when the bar opens. -->
 <div class="dock">
 <div class="find" role="search" transition:fly={{ y: -8, duration: 200 }}>
   <Icon name="search" />
@@ -58,16 +59,18 @@
 
 <style>
   .dock {
-    position: sticky;
-    top: 0;
-    z-index: 3;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    width: min(100%, var(--measure, 680px));
     height: 0;
-    align-self: stretch;
+    transform: translateX(-50%);
   }
   .find {
     position: absolute;
-    top: -16px;
-    right: -16px;
+    top: -4px;
+    right: 0;
+    max-width: 100%;
     display: flex;
     align-items: center;
     gap: 6px;
@@ -78,7 +81,10 @@
     border-radius: var(--pill);
     color: var(--ash);
   }
+  /* In a narrow note the field gives way; the count never wraps. */
   input {
+    flex: 0 1 200px;
+    min-width: 60px;
     width: 200px;
     border: 0;
     background: transparent;
@@ -88,6 +94,7 @@
   }
   .count {
     min-width: 56px;
+    white-space: nowrap;
     font-size: 12px;
     color: var(--dust);
     text-align: right;

@@ -17,6 +17,7 @@ describe('MENU', () => {
     const none = { open: false, sand: false };
     expect(menuEnabled('find', none)).toBe(false);
     expect(menuEnabled('bold', none)).toBe(false);
+    expect(menuEnabled('source', none)).toBe(false);
     expect(menuEnabled('new', none)).toBe(true);
     expect(menuEnabled('mandala', none)).toBe(true);
   });

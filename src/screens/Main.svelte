@@ -552,6 +552,7 @@
     code: () => editor?.format('code'),
     strike: () => editor?.format('strike'),
     mandala: toggleMandala,
+    source: () => editor?.toggleSource(),
     focus: () => {
       awake = [];
       focus = !focus;
@@ -617,6 +618,7 @@
       : e.key === 'p' ? 'search'
       : e.key === 'f' && selected ? 'find'
       : e.key === 'd' && selected ? 'draw'
+      : e.key === '/' && selected ? 'source'
       : e.key === '\\' ? 'focus'
       : e.key === 'o' ? 'vault'
       : e.key === 'n' ? 'new'
@@ -685,11 +687,15 @@
 
     <main bind:this={page} class:wide={faded('stone') && faded('sand')}>
       {#if selected}
-        {#if finding}
-          <FindBar bind:this={findBar} start={finding.start} onFind={(q) => editor?.find(q) ?? { at: 0, of: 0 }} onStep={(by) => editor?.findStep(by) ?? { at: 0, of: 0 }} onClose={endFind} />
-        {/if}
-        <div class="chrome head-wrap" class:faded={faded('head')} onpointerenter={() => wake('head')} role="presentation">
-          <NoteHead rel={selected} sand={sandNote} {now} onDraw={() => (drawing = { name: null })} onTable={(c, r) => editor?.table(c, r)} onLetGo={remove} onKeep={() => (keeping = true)} onSetLife={(life) => selected && setLife(selected, life)} />
+        <!-- The header and find stay at the top together. Find hangs under the
+             header, so it never covers its tools, and stays when focus fades it. -->
+        <div class="top">
+          <div class="chrome head-wrap" class:faded={faded('head')} onpointerenter={() => wake('head')} role="presentation">
+            <NoteHead rel={selected} sand={sandNote} {now} onDraw={() => (drawing = { name: null })} onTable={(c, r) => editor?.table(c, r)} onLetGo={remove} onKeep={() => (keeping = true)} onSetLife={(life) => selected && setLife(selected, life)} />
+          </div>
+          {#if finding}
+            <FindBar bind:this={findBar} start={finding.start} onFind={(q) => editor?.find(q) ?? { at: 0, of: 0 }} onStep={(by) => editor?.findStep(by) ?? { at: 0, of: 0 }} onClose={endFind} />
+          {/if}
         </div>
         <article>
           <!-- Back on the note: what woke in focus sleeps again. -->
@@ -812,14 +818,17 @@
   }
   /* The note's header stays at the top of the page as the note scrolls, so
      Let go and Set in stone are always in reach. */
-  .head-wrap {
+  .top {
     width: 100%;
-    display: flex;
-    justify-content: center;
     position: sticky;
     top: -28px;
     z-index: 3;
     margin-top: -28px;
+  }
+  .head-wrap {
+    width: 100%;
+    display: flex;
+    justify-content: center;
     padding: 28px 0 12px;
     background: linear-gradient(var(--ground) 82%, transparent);
   }
@@ -862,7 +871,7 @@
   }
   @container (min-width: 960px) {
     article,
-    .head-wrap {
+    .top {
       --measure: 800px;
     }
   }

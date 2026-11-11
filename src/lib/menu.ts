@@ -2,7 +2,7 @@
 // The window runs the same action for the item and for its keys (`Main.svelte`).
 import { key } from './keys';
 
-export type MenuAction = 'new' | 'search' | 'find' | 'draw' | 'keep' | 'letGo' | 'bold' | 'italic' | 'link' | 'code' | 'strike' | 'mandala' | 'focus' | 'stone' | 'sand' | 'hourglass' | 'zoomIn' | 'zoomOut' | 'vault';
+export type MenuAction = 'new' | 'search' | 'find' | 'draw' | 'keep' | 'letGo' | 'bold' | 'italic' | 'link' | 'code' | 'strike' | 'mandala' | 'source' | 'focus' | 'stone' | 'sand' | 'hourglass' | 'zoomIn' | 'zoomOut' | 'vault';
 
 export interface MenuItem {
   action: MenuAction;
@@ -38,6 +38,7 @@ export const MENU: { group: string; items: MenuItem[] }[] = [
     group: 'Window',
     items: [
       { action: 'mandala', label: 'Mandala', keys: key('M') },
+      { action: 'source', label: 'Source view', keys: key('/') },
       { action: 'focus', label: 'Focus', keys: key('\\') },
       { action: 'stone', label: 'Stone pane', keys: key('[') },
       { action: 'sand', label: 'Sand pane', keys: key(']') },
@@ -52,6 +53,6 @@ export const MENU: { group: string; items: MenuItem[] }[] = [
 /** Actions that need an open note; sand only for Set in stone. */
 export function menuEnabled(action: MenuAction, note: { open: boolean; sand: boolean }): boolean {
   if (action === 'keep') return note.sand;
-  if (['find', 'draw', 'letGo', 'bold', 'italic', 'link', 'code', 'strike'].includes(action)) return note.open;
+  if (['find', 'draw', 'source', 'letGo', 'bold', 'italic', 'link', 'code', 'strike'].includes(action)) return note.open;
   return true;
 }

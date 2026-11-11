@@ -57,7 +57,7 @@ Where two things are compared (what came in, arranging), stone sits left, sand r
   - Stone: its carving (`Carving.svelte`), a chisel and the reason it is kept, in italic serif. With no reason the chisel is faint; a click turns it into a field.
   - Then the table button, the paintbrush (⌘D), Let go, and on sand, Set in stone (⌘↵).
 - The title, in its own field drawn as the page's heading. Finishing it renames the note's file. A note with no heading (from Obsidian) shows its file name there as its title, and the title renames the file.
-- The note itself: live preview, find (⌘F), links, code, tables and pictures. See `site/docs/editor.md`.
+- The note itself: live preview, or source view (⌘/); find (⌘F), links, code, tables and pictures. See `site/docs/editor.md`.
 - "Linked from" below the note: the notes that link to it, as pills.
 - The undo message at the foot of the page, with Restore, for eight seconds.
 
