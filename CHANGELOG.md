@@ -4,6 +4,10 @@ All notable changes to Mandala. Versions follow [Semantic Versioning](https://se
 
 ## Unreleased
 
+### Your vault
+
+- Mandala no longer changes Obsidian's settings. New notes from Obsidian go where you choose there. A vault arranged before keeps the old setting (new notes in `sand/sun/`) until you change it in Obsidian.
+
 ## 0.2.0 (2026-11-09)
 
 A preview: lifespans front and center, better lists and tables, and a fix for a note that seemed to lose its words.

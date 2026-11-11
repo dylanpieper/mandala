@@ -8,10 +8,10 @@ Read this before changing anything in `crates/mandala-core`.
 <vault>/                         any folder of markdown, often an Obsidian vault, often synced
   stone/…                        kept, any subfolders
   sand/breath/                   a breath
-  sand/sun/                      a sun (where Obsidian's new notes go)
+  sand/sun/                      a sun
   sand/moon/quarter|half|full/   moons
-  attachments/                   left where it is; new pictures go here (`attach.rs`)
-  .obsidian/                     Obsidian's; Mandala only ever sets two keys in app.json
+  attachments/                   pasted images and drawings (`attach.rs`)
+  .obsidian/                     Obsidian's settings; read only for its image folder
   .mandala/
     life.json                    the clock (see below)
     settling/<id>/<file>.md      let go or swept, restorable for 24 hours
@@ -105,8 +105,9 @@ Obsidian hides folders that start with a dot, so `.mandala/` (and with it settli
 1. optionally copies the whole vault to a snapshot outside it,
 2. makes the sand folders and `.mandala/`,
 3. moves each entry under `stone/`,
-4. rewrites `[[Folder/Note]]` links to `[[stone/Folder/Note]]` (plain `[[Note]]` links need nothing: Obsidian resolves them by name),
-5. optionally sets Obsidian's `newFileLocation: "folder"` and `newFileFolderPath: "sand/sun"`, keeping every other key.
+4. rewrites `[[Folder/Note]]` links to `[[stone/Folder/Note]]` (plain `[[Note]]` links need nothing: Obsidian resolves them by name).
+
+It never changes Obsidian's settings.
 
 `arrange_plan_only(chosen)` moves only the chosen entries.
 

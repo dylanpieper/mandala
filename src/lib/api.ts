@@ -34,7 +34,7 @@ export const api = {
   lastVault: () => call<string | null>('last_vault'),
   openVault: (path: string) => call<VaultInfo>('open_vault', { path }),
   arrangePlan: () => call<Plan>('arrange_plan'),
-  arrange: (snapshot: boolean, obsidianToSand: boolean, only: string[] | null = null) => call<void>('arrange', { snapshot, obsidianToSand, only }),
+  arrange: (snapshot: boolean, only: string[] | null = null) => call<void>('arrange', { snapshot, only }),
   pendingDownloads: () => call<number>('pending_downloads'),
   arrive: () => call<Arrival>('arrive'),
   overview: () => call<Overview>('overview'),

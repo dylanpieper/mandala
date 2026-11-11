@@ -36,7 +36,7 @@
     try {
       // Always a snapshot first (so arranging can be undone), and Obsidian's
       // new notes start as sand.
-      await api.arrange(true, true, kept.length === plan!.moves.length ? null : kept);
+      await api.arrange(true, kept.length === plan!.moves.length ? null : kept);
       onDone();
     } catch (e) {
       error = String(e);

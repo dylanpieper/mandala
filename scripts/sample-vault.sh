@@ -93,7 +93,7 @@ if [[ $arranged -eq 1 ]]; then
   ago 200 "sand/moon/half/To J., unsent.md"
   note "sand/moon/full/Half a poem about rain.md" "# Half a poem about rain\n\nThe gutters learn the shape of the street\n"
   ago 300 "sand/moon/full/Half a poem about rain.md"
-  printf '{\n  "spellcheck": true,\n  "newFileLocation": "folder",\n  "newFileFolderPath": "sand/sun"\n}\n' > "$dir/.obsidian/app.json"
+  printf '{\n  "spellcheck": true\n}\n' > "$dir/.obsidian/app.json"
 fi
 
 # An ISO time in UTC, N hours ago, for settling notes' meta.json.

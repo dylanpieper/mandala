@@ -68,7 +68,7 @@ impl Vault {
     }
 
     /// Carry out a plan. With `snapshot`, the whole vault is copied there first.
-    pub fn arrange(&self, plan: &Plan, snapshot: Option<&Path>, obsidian_new_notes_to_sand: bool) -> Result<()> {
+    pub fn arrange(&self, plan: &Plan, snapshot: Option<&Path>) -> Result<()> {
         if let Some(to) = snapshot {
             if to.starts_with(self.root()) {
                 bail!("the snapshot must be outside the vault");
@@ -91,28 +91,8 @@ impl Vault {
                 write_atomic(&self.path(&n.rel)?, new.as_bytes())?;
             }
         }
-        if obsidian_new_notes_to_sand {
-            self.point_obsidian_at_sand()?;
-        }
+        // Obsidian's settings are its own: where a new note goes is the person's choice.
         Ok(())
-    }
-
-    /// Obsidian's "Default location for new notes" → `sand/sun`.
-    pub fn point_obsidian_at_sand(&self) -> Result<()> {
-        let dir = self.root().join(".obsidian");
-        if !dir.is_dir() {
-            return Ok(());
-        }
-        let path = dir.join("app.json");
-        let mut app: serde_json::Value = match fs::read(&path) {
-            Ok(b) => serde_json::from_slice(&b).unwrap_or_else(|_| serde_json::json!({})),
-            Err(_) => serde_json::json!({}),
-        };
-        if let Some(obj) = app.as_object_mut() {
-            obj.insert("newFileLocation".into(), "folder".into());
-            obj.insert("newFileFolderPath".into(), Life::Sun.folder().into());
-        }
-        write_atomic(&path, &serde_json::to_vec_pretty(&app)?)
     }
 }
 
@@ -163,7 +143,7 @@ mod tests {
         assert_eq!(plan.links_to_rewrite, 1);
 
         let snap = tempfile::tempdir().unwrap();
-        v.arrange(&plan, Some(&snap.path().join("before")), true).unwrap();
+        v.arrange(&plan, Some(&snap.path().join("before"))).unwrap();
         assert!(v.is_arranged());
         assert_eq!(v.read("stone/Practice/Impermanence.md").unwrap(), "See [[stone/Reading/Ryokan]] and [[Inbox]].");
         assert!(v.path("stone/Inbox.md").unwrap().exists());
@@ -171,10 +151,8 @@ mod tests {
         assert!(v.root().join("sand/moon/quarter").is_dir());
         assert!(snap.path().join("before/Practice/Impermanence.md").exists(), "snapshot taken first");
 
-        let app: serde_json::Value =
-            serde_json::from_slice(&fs::read(v.root().join(".obsidian/app.json")).unwrap()).unwrap();
-        assert_eq!(app["newFileFolderPath"], "sand/sun");
-        assert_eq!(app["spellcheck"], true, "other Obsidian settings are kept");
+        let app = fs::read_to_string(v.root().join(".obsidian/app.json")).unwrap();
+        assert_eq!(app, "{\"spellcheck\": true}", "Obsidian's settings are left as they were");
     }
 
     #[test]
@@ -192,7 +170,7 @@ mod tests {
         assert_eq!(plan.notes, 2);
         assert_eq!(plan.links_to_rewrite, 1, "only links into moved folders change");
 
-        v.arrange(&plan, None, false).unwrap();
+        v.arrange(&plan, None).unwrap();
         assert!(v.path("stone/Practice/Impermanence.md").unwrap().exists());
         assert!(v.path("Work/Plan.md").unwrap().exists(), "left where it was");
         assert_eq!(v.read("stone/Practice/Impermanence.md").unwrap(), "See [[stone/Reading/Ryokan]] and [[Work/Plan]].");
@@ -204,6 +182,6 @@ mod tests {
     fn a_snapshot_inside_the_vault_is_refused() {
         let (_r, _s, v) = plain_vault();
         let plan = v.arrange_plan().unwrap();
-        assert!(v.arrange(&plan, Some(&v.root().join("snap")), false).is_err());
+        assert!(v.arrange(&plan, Some(&v.root().join("snap"))).is_err());
     }
 }
