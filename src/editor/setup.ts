@@ -1,6 +1,6 @@
 import { defaultKeymap, history, historyKeymap, indentWithTab } from '@codemirror/commands';
 import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
-import { EditorState } from '@codemirror/state';
+import { Compartment, EditorState } from '@codemirror/state';
 import { EditorView, keymap } from '@codemirror/view';
 import { languages } from '@codemirror/language-data';
 import { findField } from './find';
@@ -23,6 +23,8 @@ export interface EditorHandle {
   load(key: string, text: string): void;
   /** The open note was renamed: its history follows it. */
   rekey(key: string): void;
+  /** Source view (⌘/): the raw markdown, every mark shown, tables and pictures as text. Off is live preview. */
+  setSource(on: boolean): void;
   destroy(): void;
 }
 
@@ -32,6 +34,11 @@ export function createEditor(
 ): EditorHandle {
   const notes = new NoteStates();
   let key = options.key;
+  // Live preview and drawn tables sit in one compartment, so source view can take them out.
+  const preview = new Compartment();
+  const live = [tables, livePreview];
+  let source = false;
+  const showMode = () => view.dispatch({ effects: preview.reconfigure(source ? [] : live) });
   const extensions = [
     history(),
     // Up from the first line, or Backspace at the very start, goes to the title above.
@@ -49,20 +56,19 @@ export function createEditor(
       },
       { key: 'Backspace', run: (v) => (v.state.selection.main.empty && v.state.selection.main.head === 0 ? (options.onExitTop(), true) : false) },
     ]),
-    // Formatting first. ⌘[ and ⌘] are the rails, and ⌘I italic, so their defaults (indent, select syntax) are left out; Tab indents.
+    // Formatting first. ⌘[ and ⌘] are the rails, ⌘I italic and ⌘/ source view, so their defaults (indent, select syntax, comment) are left out; Tab indents.
     keymap.of(formatKeys),
     // On a list item, Tab and Shift+Tab move it a level; elsewhere they indent as before.
     keymap.of(listKeys),
-    keymap.of([...defaultKeymap.filter((k) => !['Mod-[', 'Mod-]', 'Mod-i'].includes(k.key ?? '')), ...historyKeymap, indentWithTab]),
+    keymap.of([...defaultKeymap.filter((k) => !['Mod-[', 'Mod-]', 'Mod-i', 'Mod-/'].includes(k.key ?? '')), ...historyKeymap, indentWithTab]),
     // Fenced code is highlighted by its language, each loaded from the bundle when first used.
     markdown({ base: markdownLanguage, codeLanguages: languages }),
-    tables,
+    preview.of(live),
     lists,
     EditorView.lineWrapping,
     EditorView.contentAttributes.of({ 'aria-label': 'Note', spellcheck: 'true' }),
     theme,
     highlight,
-    livePreview,
     findField,
     wikilinkComplete,
     noteTitles.of(options.noteTitles),
@@ -85,6 +91,12 @@ export function createEditor(
       notes.keep(key, view.state);
       key = next;
       view.setState(notes.take(next, text) ?? fresh(text));
+      // The view belongs to the window, not the note: a note opens in it.
+      showMode();
+    },
+    setSource(on) {
+      source = on;
+      showMode();
     },
     rekey(next) {
       key = next;

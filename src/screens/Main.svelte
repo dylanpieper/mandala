@@ -564,6 +564,9 @@
     } else if (e.key === 'g' && finding) {
       e.preventDefault();
       editor?.findStep(e.shiftKey ? -1 : 1);
+    } else if (e.key === '/' && selected) {
+      e.preventDefault();
+      editor?.toggleSource();
     } else if (e.key === 'd' && selected) {
       e.preventDefault();
       drawing = { name: null };
