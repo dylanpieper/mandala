@@ -4,6 +4,13 @@ All notable changes to Mandala. Versions follow [Semantic Versioning](https://se
 
 ## Unreleased
 
+### The window
+
+- A menu (☰) at the right of the title bar replaces the help card: every shortcut, as an item to click.
+- The hourglass is now in the sand rail's head, so nothing sits beside the window's buttons.
+- In the menu, New note, Set in stone, Let go and Change vault are held for a second, each in its own color.
+- Hold ⌥⌘⌫ to let go of the open note. A card fills while you hold; release early and nothing happens.
+
 ## 0.2.0 (2026-11-09)
 
 A preview: lifespans front and center, better lists and tables, and a fix for a note that seemed to lose its words.

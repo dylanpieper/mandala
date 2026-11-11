@@ -11,24 +11,27 @@ export interface HoldOptions {
 export const HOLD_MS = 1000;
 const DRAIN_MS = 400;
 
-export function hold(node: HTMLElement, options: HoldOptions) {
+/**
+ * The fill of a hold, apart from what is pressed: `press` fills it over `ms`,
+ * `release` drains it. `draw` gets each step (0 to 1); `done` runs at full.
+ * Used by `hold` (a button) and by key holds (⌥⌘⌫ to let go).
+ */
+export function holdFill(options: { ms?: number; draw: (progress: number, holding: boolean) => void; done: () => void }) {
   let opts = options;
   let progress = 0;
   let holding = false;
   let last = 0;
   let frame = 0;
 
-  const draw = () => node.style.setProperty('--hold', progress.toFixed(3));
-
   function tick(t: number) {
     const dt = last ? t - last : 0;
     last = t;
     progress = Math.min(1, Math.max(0, progress + (holding ? dt / (opts.ms ?? HOLD_MS) : -dt / DRAIN_MS)));
-    draw();
+    opts.draw(progress, holding);
     if (progress >= 1) {
-      release();
+      holding = false;
       progress = 0;
-      draw();
+      opts.draw(progress, holding);
       opts.done();
       return;
     }
@@ -36,18 +39,41 @@ export function hold(node: HTMLElement, options: HoldOptions) {
     else last = 0;
   }
 
-  function press() {
-    if (holding) return;
-    holding = true;
-    node.classList.add('held');
-    last = 0;
-    cancelAnimationFrame(frame);
-    frame = requestAnimationFrame(tick);
-  }
-  function release() {
-    holding = false;
+  return {
+    press() {
+      if (holding) return;
+      holding = true;
+      last = 0;
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(tick);
+    },
+    release() {
+      holding = false;
+    },
+    get holding() {
+      return holding;
+    },
+    update(next: typeof options) {
+      opts = next;
+    },
+    destroy() {
+      cancelAnimationFrame(frame);
+    },
+  };
+}
+
+export function hold(node: HTMLElement, options: HoldOptions) {
+  let opts = options;
+  const draw = (progress: number, holding: boolean) => {
+    node.style.setProperty('--hold', progress.toFixed(3));
+    node.classList.toggle('held', holding);
+  };
+  const fill = holdFill({ draw, done: () => opts.done(), ms: opts.ms });
+  const press = () => fill.press();
+  const release = () => {
+    fill.release();
     node.classList.remove('held');
-  }
+  };
 
   const down = (e: PointerEvent) => {
     if (e.button !== 0) return;
@@ -79,9 +105,10 @@ export function hold(node: HTMLElement, options: HoldOptions) {
   return {
     update(next: HoldOptions) {
       opts = next;
+      fill.update({ draw, done: () => opts.done(), ms: next.ms });
     },
     destroy() {
-      cancelAnimationFrame(frame);
+      fill.destroy();
       node.removeEventListener('pointerdown', down);
       node.removeEventListener('pointerup', release);
       node.removeEventListener('pointercancel', release);

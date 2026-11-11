@@ -94,7 +94,7 @@ Mandala tries again the next time you finish the title or leave the note.
 
 ## Letting go and restoring
 
-A held **Let go** crumbles the open note's page into sand that blows away; then its row leaves the rail. Neither is final. The note leaves the vault at once (so it disappears from Obsidian too) and settles for 24 hours in `.mandala/settling/`. It can be restored from:
+A held **Let go** (or ⌥⌘⌫, held) crumbles the open note's page into sand that blows away; then its row leaves the rail. Neither is final. The note leaves the vault at once (so it disappears from Obsidian too) and settles for 24 hours in `.mandala/settling/`. It can be restored from:
 
 - the message that follows a let go, with **Restore**,
 - **search** (⌘P), where settled notes show faintly with **Restore**,
