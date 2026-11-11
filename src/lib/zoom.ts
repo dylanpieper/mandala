@@ -30,16 +30,21 @@ export function restoreZoom() {
   if (LEVELS[level] !== 1) apply();
 }
 
+/** Zoom a step in (1) or out (-1), or back to 100% (0). */
+export function zoomBy(step: -1 | 0 | 1) {
+  const next = nextLevel(level, step);
+  if (next !== level) {
+    level = next;
+    apply();
+  }
+}
+
 /** Handle ⌘+, ⌘− and ⌘0. True when the key was a zoom key. */
 export function zoomKey(e: KeyboardEvent): boolean {
   if (!modHeld(e) || e.altKey) return false;
   const step = e.key === '=' || e.key === '+' ? 1 : e.key === '-' || e.key === '_' ? -1 : e.key === '0' ? 0 : null;
   if (step === null) return false;
   e.preventDefault();
-  const next = nextLevel(level, step);
-  if (next !== level) {
-    level = next;
-    apply();
-  }
+  zoomBy(step);
   return true;
 }

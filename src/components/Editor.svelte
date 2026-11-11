@@ -4,6 +4,7 @@
   import { pictureChanged, placeBlock } from '../editor/pictures';
   import { endFind, find as findIn, findCount, step } from '../editor/find';
   import { insertTable } from '../editor/tables';
+  import { formats, type Format } from '../editor/format';
 
   let {
     rel,
@@ -105,6 +106,14 @@
   /** Put an empty table at the caret (`editor/tables.ts`). */
   export function table(cols: number, rows: number) {
     if (editor) insertTable(editor.view, cols, rows);
+  }
+
+  /** Format the selection, as its key does (from the menu), then back into the note. */
+  export function format(kind: Format) {
+    const view = editor?.view;
+    if (!view) return;
+    view.focus();
+    formats[kind](view);
   }
 
   /** The selected text, to start a find with. */

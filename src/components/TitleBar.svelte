@@ -1,12 +1,13 @@
 <script lang="ts">
-  // The title bar: the hourglass on the left, the vault and the open note's
-  // folders in the middle, and on the right the mandala, search, help and the
-  // pane toggles. The whole bar drags the window ("deep"); its buttons stay
+  // The title bar: room for the window's buttons on the left, the vault and
+  // the open note's folders in the middle, and on the right the mandala, search,
+  // the pane toggles and the menu. Nothing sits beside the window's buttons, so
+  // zoom never changes a gap there. The whole bar drags the window ("deep"); its buttons stay
   // clickable.
   import Glyph from './Glyph.svelte';
-  import Help from './Help.svelte';
-  import Hourglass from './Hourglass.svelte';
   import Icon from './Icon.svelte';
+  import Menu from './Menu.svelte';
+  import type { MenuAction } from '../lib/menu';
   import { fly } from 'svelte/transition';
   import { isMac, key } from '../lib/keys';
   import { revealFolder } from '../lib/api';
@@ -20,7 +21,19 @@
     onChangeVault,
     onToggleMandala,
     onSearch,
-  }: { vaultName: string; vaultRoot: string; crumbs: string[]; viewing: boolean; onChangeVault: () => void; onToggleMandala: () => void; onSearch: () => void } = $props();
+    run,
+    enabled,
+  }: {
+    vaultName: string;
+    vaultRoot: string;
+    crumbs: string[];
+    viewing: boolean;
+    onChangeVault: () => void;
+    onToggleMandala: () => void;
+    onSearch: () => void;
+    run: (action: MenuAction) => void;
+    enabled: (action: MenuAction) => boolean;
+  } = $props();
 
   // The vault's name opens a small menu: show its folder in Finder (or File
   // Explorer), or open another vault. The menu is fixed to the window, since
@@ -58,9 +71,7 @@
 <svelte:window onpointerdown={outside} onkeydowncapture={menuKey} />
 
 <header class="titlebar" data-tauri-drag-region="deep">
-  <div class="start">
-    <Hourglass />
-  </div>
+  <div class="start"></div>
   <div class="crumbs" class:squeezed use:squeeze inert={squeezed}>
     <Glyph />
     <button class="vault" bind:this={vaultButton} aria-haspopup="menu" aria-expanded={!!menu} onclick={toggleMenu}>{vaultName}<Icon name="folder" size={14} /></button>
@@ -69,11 +80,11 @@
   <div class="actions">
     <button class="pill" class:on={viewing} aria-pressed={viewing} onclick={onToggleMandala}><Icon name="mandala" />Mandala <span class="mono key">{key('M')}</span></button>
     <button class="pill" onclick={onSearch}><Icon name="search" />Search <span class="mono key">{key('P')}</span></button>
-    <Help />
     <div class="panes">
       <button class="pane" aria-label="Show stone ({key('[')})" aria-pressed={panes.stone} title="Stone {key('[')}" onclick={() => togglePane('stone')}><Icon name="pane-left" on={panes.stone} /></button>
       <button class="pane" aria-label="Show sand ({key(']')})" aria-pressed={panes.sand} title="Sand {key(']')}" onclick={() => togglePane('sand')}><Icon name="pane-right" on={panes.sand} /></button>
     </div>
+    <Menu {run} {enabled} />
   </div>
 </header>
 
@@ -238,7 +249,7 @@
   .key {
     color: var(--dust);
   }
-  /* A narrow bar has no room for the keys; the help card still lists them. */
+  /* A narrow bar has no room for the keys; the menu still lists them. */
   @media (max-width: 1100px) {
     .key {
       display: none;
