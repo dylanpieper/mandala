@@ -32,7 +32,7 @@
   /** A note's file name without its folder or `.md`. */
   const stemOf = (rel: string) => (rel.split('/').pop() ?? rel).replace(/\.md$/, '');
 
-  let { vaultName, vaultRoot, onChangeVault }: { vaultName: string; vaultRoot: string; onChangeVault: () => void } = $props();
+  let { vaultName, vaultRoot, onChangeVault, left = [] }: { vaultName: string; vaultRoot: string; onChangeVault: () => void; left?: Settled[] } = $props();
 
   async function changeVault() {
     await flush();
@@ -605,6 +605,8 @@
     } finally {
       ready = true;
     }
+    // What left since the last visit, named once, with Restore.
+    if (left.length) show(left, `${left.length} ${left.length === 1 ? 'note' : 'notes'} left while you were away`);
     unlisten = await onEvent('vault-changed', () => refresh());
     unlistenMenu = await onEvent('toggle-mandala', toggleMandala);
   });

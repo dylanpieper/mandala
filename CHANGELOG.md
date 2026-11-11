@@ -4,6 +4,12 @@ All notable changes to Mandala. Versions follow [Semantic Versioning](https://se
 
 ## Unreleased
 
+### Opening
+
+- No opening or closing screens. Mandala opens straight to your notes, with a small turning glyph only while sync is slow.
+- What ran out while Mandala was closed settles as it opens, and breaths settle as it closes. One message says what left, with Restore. Each note can still be restored for a day.
+- Closing quits at once, after the last save.
+
 ## 0.2.0 (2026-11-09)
 
 A preview: lifespans front and center, better lists and tables, and a fix for a note that seemed to lose its words.
