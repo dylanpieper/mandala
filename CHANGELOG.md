@@ -6,6 +6,7 @@ All notable changes to Mandala. Versions follow [Semantic Versioning](https://se
 
 ### The page
 
+- Fixed: find in note (⌘F) covered the note's header tools. It now sits below the header.
 - Each note keeps its own undo history until Mandala closes.
 - Fixed: ⌘Z on a note just opened brought back the text of the note before it, and saved it there.
 
