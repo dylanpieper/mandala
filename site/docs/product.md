@@ -1,6 +1,6 @@
 # Product
 
-Mandala is a minimalist markdown notes app built around impermanence. It is Obsidian's file model with one change: **every note begins as sand and will dissolve, unless you keep it.** Think of sand as drafts: Mandala is draft-first, for people who write first, decide later, and dislike clutter. Most drafts go on their own; what earns its place you set in stone.
+Mandala is a minimalist markdown notes app built around impermanence. It is Obsidian's file model with one change: **every note begins as sand and will dissolve, unless you set it in stone.** Think of sand as drafts: Mandala is draft-first, for people who write first, decide later, and dislike clutter. Your notes stay plain files. Edit them anywhere, such as Obsidian on your phone.
 
 ## In short
 
