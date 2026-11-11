@@ -122,6 +122,14 @@
     editor.view.dispatch({ selection: { anchor: 0 }, scrollIntoView: true });
   }
 
+  // Source view (⌘/) is for this window only: each launch starts in live preview.
+  let source = false;
+  /** Switch between live preview and source view. */
+  export function toggleSource() {
+    source = !source;
+    editor?.setSource(source);
+  }
+
   /** The open note was renamed: the same text under a new path, so nothing is loaded again. */
   export function renamed(to: string) {
     loadedRel = to;

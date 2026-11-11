@@ -33,6 +33,17 @@ A click on a drawn link opens it.
 
 On the line being edited, a click places the caret. Use ⌘-click there to follow a link.
 
+## Source view
+
+⌘/ switches between live preview and source view, as in Typora.
+
+- Source view shows the raw markdown, every mark on every line, in the note's own font. Tables and pictures show as text.
+- The title stays in its own field.
+- The view belongs to the window, not to the note: another note opens in the same view.
+- Each launch starts in live preview. The view is not saved.
+- Live preview and the drawn tables sit in one compartment (`preview` in `setup.ts`). Source view takes them out; the highlighting stays.
+- CodeMirror's own ⌘/ (comment) is left out.
+
 ## Rules
 
 - Decorations are rebuilt on document, selection, viewport and focus changes. Never on a timer.

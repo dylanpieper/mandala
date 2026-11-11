@@ -23,6 +23,7 @@
     [key('K'), 'Link'],
     [key('E'), 'Code'],
     [key('X', false, true), 'Strikethrough'],
+    [key('/'), 'Source view'],
     [key('↩'), 'Set in stone'],
     [key('O'), 'Change vault'],
     [`${key('+')}/−`, 'Zoom'],

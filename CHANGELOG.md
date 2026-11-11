@@ -4,6 +4,10 @@ All notable changes to Mandala. Versions follow [Semantic Versioning](https://se
 
 ## Unreleased
 
+### The page
+
+- ⌘/ switches between live preview and source view, where every mark shows. Each launch starts in live preview.
+
 ## 0.2.0 (2026-11-09)
 
 A preview: lifespans front and center, better lists and tables, and a fix for a note that seemed to lose its words.
