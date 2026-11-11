@@ -51,7 +51,6 @@ export const api = {
   renameTo: (rel: string, title: string) => call<Follow>('rename_to', { rel, title }),
   setOrder: (rels: string[]) => call<void>('set_order', { rels }),
   keep: (rel: string, folder: string, because: string | null) => call<string>('keep', { rel, folder, because }),
-  letGo: (rels: string[]) => call<Settled[]>('let_go', { rels }),
   /** During a visit: lets go of timed sand that has run out. Nothing while sync is still downloading. */
   sweepRanOut: () => call<Settled[]>('sweep_ran_out'),
   deleteNote: (rel: string) => call<Settled>('delete_note', { rel }),
@@ -65,7 +64,6 @@ export const api = {
   weave: (into: string, dragged: string) => call<Woven>('weave', { into, dragged }),
   combine: (into: string, dragged: string, text: string) => call<Settled>('combine', { into, dragged, text }),
   removePicture: (name: string) => call<Settled>('remove_picture', { name }),
-  breaths: () => call<NoteRef[]>('breaths'),
   closeVisit: () => call<void>('close_visit'),
   leaveVault: () => call<void>('leave_vault'),
 };

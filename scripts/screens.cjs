@@ -34,34 +34,25 @@ const OUT = 'shots';
   await go('arrange');
   await shot('arrange');
 
-  // The opening walks itself: arrive → what came in → conflict → leaving.
+  // The opening: the glyph while sync catches up (the mock has two notes to
+  // bring down), then the notes, with what left while Mandala was closed.
   await go('opening');
-  await page.waitForTimeout(1200);
-  await shot('opening-1-arrive');
-  await page.getByRole('heading', { name: 'What came in' }).waitFor({ timeout: 15000 });
-  await shot('opening-2-came-in');
-  await page.getByRole('button', { name: 'Continue' }).click();
-  await page.getByText('iCloud kept two copies').waitFor();
-  await shot('opening-3-conflict');
-  await page.getByRole('button', { name: 'Use this one' }).first().click();
-  await page.getByRole('heading', { name: 'What’s leaving' }).waitFor();
-  await shot('opening-4-leaving');
+  await shot('opening-syncing');
+  await page.getByText(/left while you were away/).waitFor({ timeout: 15000 });
+  await shot('opening-left');
 
   await go('main');
   await page.getByText('Morning pages').first().waitFor();
   await shot('main');
 
-  await page.getByRole('button', { name: /Set in stone/ }).click();
+  await page.keyboard.press('Meta+Enter');
   await shot('keep');
   await page.keyboard.press('Escape');
 
-  await page.keyboard.press('Meta+k');
-  await page.getByPlaceholder('Search stone and sand').fill('twenty');
+  await page.keyboard.press('Meta+p');
+  await page.getByPlaceholder('Search', { exact: true }).fill('twenty');
   await shot('search');
   await page.keyboard.press('Escape');
-
-  await go('closing');
-  await shot('closing');
 
   await browser.close();
   if (errors.length) {

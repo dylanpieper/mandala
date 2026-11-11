@@ -1,28 +1,23 @@
 <script lang="ts">
   // Which screen is showing. In a plain browser, `?screen=` jumps straight to
-  // one (choose, arrange, opening, main, closing), for design work.
+  // one (choose, arrange, opening, main), for design work.
   import { onMount } from 'svelte';
   import { api, chooseFolder, onEvent } from './lib/api';
   import Arrange from './screens/Arrange.svelte';
   import Choose from './screens/Choose.svelte';
-  import Closing from './screens/Closing.svelte';
   import Main from './screens/Main.svelte';
   import Opening from './screens/Opening.svelte';
-  import type { VaultInfo } from './lib/types';
+  import type { Settled, VaultInfo } from './lib/types';
   import { restoreZoom, zoomKey } from './lib/zoom';
   import { leaving } from './lib/leaving';
 
   restoreZoom();
 
-  type Screen = 'loading' | 'choose' | 'arrange' | 'opening' | 'main' | 'closing';
+  type Screen = 'loading' | 'choose' | 'arrange' | 'opening' | 'main';
   let screen = $state<Screen>('loading');
   let vault = $state<VaultInfo | null>(null);
-  let before = $state<Screen>('main');
-  // Closing ends the visit and quits or, when changing vaults, ends it and
-  // goes back to choosing.
-  let changing = $state(false);
-  // The folder to open once the closing screen ends this visit.
-  let next = $state<string | null>(null);
+  // What left since the last visit, from the opening, for Main to name.
+  let left = $state<Settled[]>([]);
   // The vault left behind, offered on the choose screen if the new one fails.
   let previous = $state<{ name: string; root: string } | null>(null);
   let error = $state('');
@@ -48,21 +43,15 @@
     const path = await chooseFolder();
     if (!path || !vault || path === vault.root) return;
     await leaving();
-    next = path;
     previous = { name: vault.name, root: vault.root };
-    before = screen;
-    changing = true;
-    screen = 'closing';
-  }
-
-  async function left() {
-    const path = next;
-    next = null;
+    try {
+      await api.leaveVault();
+    } catch (e) {
+      error = String(e);
+    }
     vault = null;
-    changing = false;
-    error = '';
-    if (path) await openVault(path);
-    else screen = 'choose';
+    left = [];
+    await openVault(path);
   }
 
   async function goBack() {
@@ -76,17 +65,10 @@
     let unlisten = () => {};
     (async () => {
       unlisten = await onEvent('close-requested', async () => {
-        // With a vault open, closing always passes the closing screen, so no
-        // breath leaves unseen and a failed close is shown, not lost.
-        // Closing the window while changing vaults turns the closing into a quit.
-        changing = false;
-        if (screen === 'closing') return;
-        // The last save and rename finish first, even on a quick quit.
+        // The last save and rename finish first; then the visit ends (its
+        // breaths settle, and the next arrival names them) and Mandala quits.
         await leaving();
-        if (vault) {
-          before = screen;
-          screen = 'closing';
-        } else api.closeVisit();
+        await api.closeVisit();
       });
       const jump = new URLSearchParams(location.search).get('screen') as Screen | null;
       const last = await api.lastVault();
@@ -110,11 +92,9 @@
 {:else if screen === 'arrange' && vault}
   <Arrange root={vault.root} onDone={() => (screen = 'opening')} onChooseAnother={choose} />
 {:else if screen === 'opening'}
-  <Opening onEnter={() => (screen = 'main')} />
+  <Opening onEnter={(gone) => ((left = gone), (screen = 'main'))} />
 {:else if screen === 'main' && vault}
-  <Main vaultName={vault.name} vaultRoot={vault.root} onChangeVault={changeVault} />
-{:else if screen === 'closing'}
-  <Closing onStay={() => ((changing = false), (next = null), (screen = before))} onLeft={changing ? left : null} />
+  <Main vaultName={vault.name} vaultRoot={vault.root} onChangeVault={changeVault} {left} />
 {/if}
 
 <style>

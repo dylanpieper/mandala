@@ -4,6 +4,7 @@
   import { pictureChanged, placeBlock } from '../editor/pictures';
   import { endFind, find as findIn, findCount, step } from '../editor/find';
   import { insertTable } from '../editor/tables';
+  import { formats, type Format } from '../editor/format';
 
   let {
     rel,
@@ -35,14 +36,14 @@
   let lastCaret: number | null = null;
 
   onMount(() => {
-    editor = createEditor(host, { text, noteTitles: () => titles, onExitTop: () => onExitTop(), onChange: (t) => onChange(t), onFollowLink: (t) => onFollowLink(t), onOpenDrawing: (n) => onOpenDrawing(n), onRemovePicture: (n) => onRemovePicture(n) });
+    editor = createEditor(host, { key: rel, text, noteTitles: () => titles, onExitTop: () => onExitTop(), onChange: (t) => onChange(t), onFollowLink: (t) => onFollowLink(t), onOpenDrawing: (n) => onOpenDrawing(n), onRemovePicture: (n) => onRemovePicture(n) });
     loadedRel = rel;
   });
 
-  // A different note opened: load it without counting as an edit.
+  // A different note opened: load it without counting as an edit, with its own undo history.
   $effect(() => {
     if (editor && rel !== loadedRel) {
-      editor.load(text);
+      editor.load(rel, text);
       loadedRel = rel;
       lastCaret = null;
     }
@@ -107,6 +108,14 @@
     if (editor) insertTable(editor.view, cols, rows);
   }
 
+  /** Format the selection, as its key does (from the menu), then back into the note. */
+  export function format(kind: Format) {
+    const view = editor?.view;
+    if (!view) return;
+    view.focus();
+    formats[kind](view);
+  }
+
   /** The selected text, to start a find with. */
   export function selection() {
     const view = editor?.view;
@@ -122,9 +131,18 @@
     editor.view.dispatch({ selection: { anchor: 0 }, scrollIntoView: true });
   }
 
+  // Source view (⌘/) is for this window only: each launch starts in live preview.
+  let source = false;
+  /** Switch between live preview and source view. */
+  export function toggleSource() {
+    source = !source;
+    editor?.setSource(source);
+  }
+
   /** The open note was renamed: the same text under a new path, so nothing is loaded again. */
   export function renamed(to: string) {
     loadedRel = to;
+    editor?.rekey(to);
   }
 
   /** A picture changed on disk: draw it again. */

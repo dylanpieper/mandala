@@ -5,6 +5,7 @@
   import { leavingSoon, timeLeft, timeShare } from '../lib/time';
   import { LIVES } from '../lib/lives';
   import { hold } from '../lib/hold';
+  import Hourglass from './Hourglass.svelte';
   import Icon from './Icon.svelte';
   import LifeMark from './LifeMark.svelte';
   import type { Life, SandItem } from '../lib/types';
@@ -68,7 +69,11 @@
 
 <aside class="rail" class:taking={stoneLifted} bind:this={rail} aria-label="Sand, notes that will dissolve" use:droppable={stoneHere}>
   <header>
-    <span class="mono count">{sand.length} drifting</span>
+    <!-- The hourglass keeps time beside the sand: ⌘T turns it even when the rail is hidden. -->
+    <div class="lead">
+      <Hourglass />
+      <span class="mono count">{sand.length} drifting</span>
+    </div>
     <div class="name">
       <h2>Sand</h2>
       <span class="grains" aria-hidden="true"><i></i><i></i><i></i></span>
@@ -131,6 +136,7 @@
     justify-content: space-between;
     align-items: center;
   }
+  .lead,
   .name {
     display: flex;
     align-items: center;

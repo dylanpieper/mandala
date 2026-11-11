@@ -6,7 +6,7 @@ The docs are in `site/docs/`, and the website shows them. Read `site/docs/workin
 
 ## Rules that hold everywhere
 
-- Nothing is swept while Mandala is closed. Sand that runs out while Mandala is open lets go the moment it runs out, even when its window is not in front (`sweep_ran_out`); sand that ran out while it was closed waits for "What's leaving"; breaths wait for the closing screen.
+- Nothing is swept while Mandala is closed. Sand that runs out while it is open settles at once, even when its window is not in front (`sweep_ran_out`). What ran out while it was closed settles at the next arrival, after sync. Breaths settle at the close.
 - Never sweep from a stale view: wait until `pending_downloads()` is 0.
 - Nothing is deleted outright: a note settles for 24 hours in `.mandala/settling/`.
 - Every write goes through `fsx::write_atomic`.
@@ -25,7 +25,7 @@ The docs are in `site/docs/`, and the website shows them. Read `site/docs/workin
 | You are about to touch | Read first |
 |---|---|
 | Anything in `crates/mandala-core` | `site/docs/vault.md` |
-| `visit.rs`, `Opening.svelte`, `Closing.svelte` | `site/docs/product.md` |
+| `visit.rs`, `Opening.svelte` | `site/docs/product.md` |
 | `copies.rs`, `combine.rs`, `Combine.svelte` | `site/docs/combine.md` |
 | `src/editor/*`, `Editor.svelte` | `site/docs/editor.md` |
 | Any screen, component, color, spacing or motion | `site/docs/design.md` |

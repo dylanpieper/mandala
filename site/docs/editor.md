@@ -33,12 +33,40 @@ A click on a drawn link opens it.
 
 On the line being edited, a click places the caret. Use ⌘-click there to follow a link.
 
+## Source view
+
+⌘/ switches between live preview and source view, as in Typora.
+
+- Source view shows the raw markdown, every mark on every line, in the note's own font. Tables and pictures show as text.
+- The title stays in its own field.
+- The view belongs to the window, not to the note: another note opens in the same view.
+- Each launch starts in live preview. The view is not saved.
+- Live preview and the drawn tables sit in one compartment (`preview` in `setup.ts`). Source view takes them out; the highlighting stays.
+- CodeMirror's own ⌘/ (comment) is left out.
+
 ## Rules
 
 - Decorations are rebuilt on document, selection, viewport and focus changes. Never on a timer.
 - Replace decorations (hidden syntax) must not overlap one another. `[[wikilinks]]` are found by pattern first. CommonMark `Link` nodes that overlap them are skipped.
-- Loading a different note uses `EditorHandle.load`. It does not count as an edit, and it does not save.
+- Loading a different note uses `EditorHandle.load`. It gives the editor a new state, so it is not an edit, it does not save, and it cannot be undone.
 - Saving is the window's job (`Main.svelte`): 400 ms after typing stops, and always before switching notes or closing.
+
+## Undo (`history.ts`)
+
+⌘Z and ⇧⌘Z undo and redo in the note (Ctrl+Z and Ctrl+Y off a Mac).
+This includes typing, formatting, lists, tables and embeds.
+
+- One editor shows every note. Each note keeps its own history until Mandala closes.
+  - When another note opens, the editor's state is put aside under the note's path.
+  - When the note opens again with the same text, its state comes back: its history and its caret.
+  - When its text changed elsewhere meanwhile (on the phone, say), the note opens with no history.
+  - A rename takes the history with it (`rekey`).
+- ⌘Z never reaches another note.
+- History is CodeMirror's (`@codemirror/commands` 6.11.1): at least 100 steps, and typing within 500 ms is one step.
+- History is kept only in memory. It does not survive closing Mandala.
+- The title field has the system's own undo.
+
+What can be undone outside the editor is in `site/docs/product.md`: a rename has Undo in its message, and a note let go or swept can be restored for 24 hours.
 
 ## The title (`lib/title.ts`)
 
@@ -161,7 +189,7 @@ Numbers:
 
 ## Find in note (`find.ts`, `FindBar.svelte`)
 
-⌘F opens a bar at the top right of the page, filled with the selected text.
+⌘F opens a bar under the note's header, at the right of the note, filled with the selected text.
 
 - Every match is marked faintly, and the current one plainly.
 - Case is ignored. The text is plain, not a pattern.
@@ -169,6 +197,8 @@ Numbers:
 - Esc closes the bar and selects the current match in the note.
 - Opening another note closes the bar.
 - The bar has no height in the page, so the note does not move when it opens.
+- It stays under the header as the note scrolls, and never covers the header's tools. Focus does not fade it.
+- In a narrow note the field shrinks, and the count stays on one line.
 
 ## Pictures (`pictures.ts`)
 
