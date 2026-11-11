@@ -34,11 +34,8 @@ export interface Overview {
 export interface Arrival {
   visit: number;
   since: string | null;
-  stone_changed: NoteRef[];
-  sand_new: NoteRef[];
-  leaving: NoteRef[];
-  /** Sand moved into stone elsewhere since the last visit, with no carving yet. */
-  kept_elsewhere: NoteRef[];
+  /** What left since the last visit: breaths at its close, and sand that ran out while closed. */
+  left: Settled[];
 }
 
 /** A note renamed to follow its heading (`rename.rs`), and the notes whose links changed. */

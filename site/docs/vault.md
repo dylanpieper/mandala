@@ -64,16 +64,16 @@ Obsidian hides folders that start with a dot, so `.mandala/` (and with it settli
 - `written` is always the real creation time. The clock counts from `started` when it is set.
 - `life` always equals the folder. `dissolves` is the clock start plus the duration.
   A folder change outside a choice in Mandala goes through `Grain::relife`, so `dissolves` can only get earlier.
-- `arrive` compares the grains from before and after `reconcile`.
-  - A gone grain that matches a stone note was kept elsewhere. It matches by inode (a move) or by its last-seen text (a move that synced as delete and create).
-  - Those with no carving are `Arrival::kept_elsewhere`.
-  - A keep made while Mandala is open is picked up by `refresh` and is not shown.
+- `arrive` begins a visit, before any note is written in it.
+  - Once `pending_downloads()` is 0, it settles timed sand that ran out while Mandala was closed, and breaths left from a visit that never closed.
+  - `Arrival::left` names those, and the breaths that settled when the last visit closed. The window shows them in one message, with Restore.
+  - Breaths of the last close are named only if that visit closed after it opened, so they are named once.
 - `sweep_ran_out` sweeps timed sand as it runs out during a visit.
   - It refuses while `pending_downloads()` is above 0.
   - It reconciles first, so a lifespan changed on the phone counts.
   - It never touches breaths, stone or `Elsewhere`.
 - `seen_visit` is what makes breaths work. A breath leaves at the close of the visit in which it was first seen.
-  If that visit never closed (a crash), the breath shows under "What's leaving" at the next arrival.
+  If that visit never closed (a crash), the breath settles at the next arrival.
 
 ## Traps
 

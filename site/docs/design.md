@@ -16,14 +16,14 @@ Nothing bright pulls at you, and the words are what glows.
 ## The window
 
 Inner mirrors outer: stone on the left, sand on the right, the page between.
-Where two things are compared (what came in, arranging), stone sits left, sand right, the result in the middle.
+Where two things are compared (arranging, combining), stone sits left, sand right, the result in the middle.
 
 ### The title bar
 
 - The left holds only room for the window's buttons, so zoom cannot shift a gap there.
 - The glyph and the vault's name in the middle, then the open note's folders. The name opens a small menu: Show in Finder (File Explorer off a Mac), and Open another vault (⌘O).
   - Another vault is chosen first. Cancelling, or choosing the same vault, changes nothing.
-  - Only a new folder ends the visit, through the closing screen. If it does not open, the choose screen offers the way back.
+  - Only a new folder ends the visit. If it does not open, the choose screen offers the way back.
 - At the right: Mandala (⌘M), Search (⌘P), the two pane toggles (stone ⌘[, sand ⌘]), and last the menu (☰).
   - The menu lists every shortcut as an item to click, in three groups: Note, Format and Window (`lib/menu.ts`, `Menu.svelte`).
   - An item runs the same action as its keys. An item that needs an open note, or sand, is faint until there is one.
@@ -117,18 +117,16 @@ Sheets and cards lie over the page on a dimmed, blurred ground. The page stays a
 ## Motion
 
 Everything that appears, goes, opens or moves does so over a moment. A jump is a bug.
-Use the tokens: `--quick` (160 ms) for hovers, `--settle` (420 ms) for arrivals, `--breath` (4 s) for the opening. `--ease` runs into place and stops, with no crawl at the end.
+Use the tokens: `--quick` (160 ms) for hovers, `--settle` (420 ms) for arrivals, `--breath` (4 s) for the mandala view's breathing. `--ease` runs into place and stops, with no crawl at the end.
 With `prefers-reduced-motion`, the tokens become 1 ms.
 
 | Moment | Motion |
 |---|---|
-| Arrive | The ring breathes in and out over 4 s; the petals turn a few degrees. |
-| Open | A held Open on "What's leaving": the cards spread their letters and blur (900 ms), 80 ms apart up to the eleventh; the title and the button fade with them (600 ms). |
+| Arrive | Nothing if arriving is quick. After 400 ms the glyph fades in and turns slowly (12 s a turn). While sync goes on, "Syncing" and its count fade in. |
 | The main window | It fades in over `--settle` once its first note is open, so empty rails never flash. |
 | Leaving soon | The note opens under a fall of sand (`SandFall.svelte`). Drag across it like a broom, or hold Sweep. It clears once 80% is swept, and stays clear for the visit. It follows the page as rails open and shut. |
 | Keep | The rune paints on and sets (950 ms). Then the note's row lifts out of the sand rail as a card and glides to its stone folder, from sand to stone (700 ms, `lib/flight.ts`). Nothing flies when a rail is hidden or faded, or the folder is closed. |
 | Let go, and sand that runs out | The open page crumbles into grains (`lib/crumble.ts`) that a soft wind carries right (about 2.2 s). The row stays until the sand has mostly blown (1.5 s), then the rows below close up (600 ms). Refreshes wait meanwhile, so the row never jumps early. |
-| Close | The breaths blur and fade as at Open, and the title and the buttons with them. |
 
 The rails get no sand when a note crumbles. In the app's WebKit, a row in a scrolled rail is not repainted while a canvas animates above it, so its card stayed drawn while the sand blew.
 
@@ -137,7 +135,7 @@ The rails get no sand when a note crumbles. In the app's WebKit, a row in a scro
 | Token | Value | Use |
 |---|---|---|
 | `--ground` | `#141317` | the page |
-| `--night` | `#0e0d10` | opening and closing |
+| `--night` | `#0e0d10` | the opening |
 | `--rail` | `#17161a` | rails, title bar |
 | `--raised` | `#18171b` | cards, sheets, code blocks |
 | `--line` | `#2c2a31` | every border |
