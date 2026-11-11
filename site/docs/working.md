@@ -109,7 +109,7 @@ src/                     the window (Svelte 5)
   editor/tables.ts         tables drawn and edited as tables
   editor/tasks.ts          done tasks sink below open ones
   components/ screens/     rails, keep dialog, search; choose, arrange, opening, main, closing
-site/                    the website: home page, teaser, docs explorer
+site/                    the website: home page, docs explorer
   docs/                    these docs: how each part works and why
 scripts/screens.cjs      screenshots of every screen into shots/
 scripts/sample-vault.sh  a throwaway Obsidian-like vault to try things on
