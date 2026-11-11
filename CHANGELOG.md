@@ -24,6 +24,10 @@ All notable changes to Mandala. Versions follow [Semantic Versioning](https://se
 - In the menu, New note, Set in stone, Let go and Change vault are held for a second, each in its own color.
 - Hold ⌥⌘⌫ to let go of the open note. A card fills while you hold; release early and nothing happens.
 
+### Your vault
+
+- Mandala no longer changes Obsidian's settings. New notes from Obsidian go where you choose there. A vault arranged before keeps the old setting (new notes in `sand/sun/`) until you change it in Obsidian.
+
 ### The site
 
 - The home page is centred: the logo, the line, and the downloads. The teaser is gone.

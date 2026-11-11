@@ -28,7 +28,7 @@ Mandala is a minimalist markdown notes app built around impermanence. It is Obsi
 | Lifespan | Lasts | Folder |
 |---|---|---|
 | A breath | until the end of the visit in which Mandala first sees it | `sand/breath/` |
-| A sun | 24 hours (the default) | `sand/sun/` |
+| A sun | 24 hours | `sand/sun/` |
 | A quarter moon | 7.4 days | `sand/moon/quarter/` |
 | A half moon | 14.8 days | `sand/moon/half/` |
 | A full moon | 29.5 days (one synodic month) | `sand/moon/full/` |
@@ -104,7 +104,8 @@ There is no Mandala phone app, and nothing is swept while Mandala is closed. How
 
 We recommend the Obsidian app on the phone, with the sync service that you prefer. Mandala's folders are plain Obsidian folders, so the phone needs no plugin:
 
-- New notes land in `sand/sun/` (arranging sets Obsidian's "Default location for new notes").
+- A new note goes where Obsidian's "Default location for new notes" says. Mandala leaves that setting to you: pick a sand folder there, or move notes yourself.
+- A note outside `sand/` and `stone/` is never swept, until you move it into sand.
 - Moving a note between sand folders changes its lifespan.
 - Moving a note into `stone/` keeps it.
 - Deleting a note in Obsidian lets it go.
