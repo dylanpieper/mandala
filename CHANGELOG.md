@@ -4,6 +4,11 @@ All notable changes to Mandala. Versions follow [Semantic Versioning](https://se
 
 ## Unreleased
 
+### The page
+
+- Each note keeps its own undo history until Mandala closes.
+- Fixed: ⌘Z on a note just opened brought back the text of the note before it, and saved it there.
+
 ## 0.2.0 (2026-11-09)
 
 A preview: lifespans front and center, better lists and tables, and a fix for a note that seemed to lose its words.
