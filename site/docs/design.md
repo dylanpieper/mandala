@@ -16,28 +16,34 @@ Nothing bright pulls at you, and the words are what glows.
 ## The window
 
 Inner mirrors outer: stone on the left, sand on the right, the page between.
-Where two things are compared (what came in, arranging), stone sits left, sand right, the result in the middle.
+Where two things are compared (arranging, combining), stone sits left, sand right, the result in the middle.
 
 ### The title bar
 
-- The hourglass at the left (`Hourglass.svelte`).
-  - A click turns it. A faint pause button after the minutes pauses it, and the bells wait.
-  - A hold opens its settings: work and rest minutes, volume, and Test.
+- The left holds only room for the window's buttons, so zoom cannot shift a gap there.
 - The glyph and the vault's name in the middle, then the open note's folders. The name opens a small menu: Show in Finder (File Explorer off a Mac), and Open another vault (⌘O).
   - Another vault is chosen first. Cancelling, or choosing the same vault, changes nothing.
-  - Only a new folder ends the visit, through the closing screen. If it does not open, the choose screen offers the way back.
-- At the right: Mandala (⌘M), Search (⌘P), the help card (`?`), and the two pane toggles (stone ⌘[, sand ⌘]).
+  - Only a new folder ends the visit. If it does not open, the choose screen offers the way back.
+- At the right: Mandala (⌘M), Search (⌘P), the two pane toggles (stone ⌘[, sand ⌘]), and last the menu (☰).
+  - The menu lists every shortcut as an item to click, in three groups: Note, Format and Window (`lib/menu.ts`, `Menu.svelte`).
+  - An item runs the same action as its keys. An item that needs an open note, or sand, is faint until there is one.
+  - Items that make, keep, let go or leave are held, not clicked, each in its color: New note in sand, Set in stone in stone, Let go and Change vault in vermilion.
+  - ↑ and ↓ move between items. Esc or a click outside closes it.
 - In a narrow window it gives way in steps.
-  - Below 1100 px the shortcut labels hide; the help card still lists them.
+  - Below 1100 px the shortcut labels hide; the menu still lists them.
   - Below 900 px the note's folders hide.
-  - When the vault's name no longer fits between the hourglass and the actions, it fades.
+  - When the vault's name no longer fits beside the actions, it fades.
 - Off a Mac the system keeps its own title bar, so no room is kept for window buttons (`html[data-os]`). There is no menu bar there: the window handles every shortcut.
 
 ### The rails
 
 - Each rail is 260 px. Its pane toggle slides it out toward its edge. Which rails show is kept in localStorage.
 - The stone rail groups notes by folder. Folders collapse; the closed set is kept in localStorage.
-- The sand rail starts with **New note**, a sand pill. A click opens a menu of the five lifespans, with none chosen for you; a held press on one makes the note.
+- The sand rail's head: the hourglass (`Hourglass.svelte`), the drifting count, and the rail's name.
+  - A click turns the hourglass. A faint pause button after the minutes pauses it, and the bells wait.
+  - A hold opens its settings: work and rest minutes, volume, and Test.
+  - ⌘T turns it even when the rail is hidden or faded.
+- Then **New note**, a sand pill. A click opens a menu of the five lifespans, with none chosen for you; a held press on one makes the note.
 - The sand rail lists sand soonest to leave first, so it is not reordered by hand.
 - A stone note dropped anywhere on the sand rail returns to sand. While stone is lifted, the rail is tinted sand and says "Drop to return to sand". The lifespan card asks how long it lasts.
 - The rails find the open note, however it was opened (search, a link, the mandala view, a new note). Its row scrolls into view, a closed folder holding it opens, and if it had to be found, it glows once in its rail's color (`lib/reveal.ts`). A hidden or faded rail stays as it is.
@@ -51,7 +57,7 @@ Where two things are compared (what came in, arranging), stone sits left, sand r
   - Stone: its carving (`Carving.svelte`), a chisel and the reason it is kept, in italic serif. With no reason the chisel is faint; a click turns it into a field.
   - Then the table button, the paintbrush (⌘D), Let go, and on sand, Set in stone (⌘↵).
 - The title, in its own field drawn as the page's heading. Finishing it renames the note's file. A note with no heading (from Obsidian) shows its file name there as its title, and the title renames the file.
-- The note itself: live preview, find (⌘F), links, code, tables and pictures. See `site/docs/editor.md`.
+- The note itself: live preview, or source view (⌘/); find (⌘F), links, code, tables and pictures. See `site/docs/editor.md`.
 - "Linked from" below the note: the notes that link to it, as pills.
 - The undo message at the foot of the page, with Restore, for eight seconds.
 
@@ -79,7 +85,6 @@ Sheets and cards lie over the page on a dimmed, blurred ground. The page stays a
 - **The combine sheet** (`Combine.svelte`): the two notes, named with a stone and a sand dot; three ways to put them together (Woven, First, Last); and the combined page, each note's lines marked faintly in its dot's color. See `site/docs/combine.md`.
 - **The table picker** (`TablePicker.svelte`): a 6 by 6 grid under the table button. Its top row, in stone, is the header; the rows below, in sand, are the table's rows.
 - **Search** (⌘P) finds notes, and notes let go of in the last day, which it can restore. Each hit has a small tag beside its title: Stone, or Sand with its lifespan icon (`lib/place.ts`); a note outside the mandala has none.
-- **The help card**: the shortcuts, then one line with an icon for each thing Mandala does. No how-to: the controls show what to hold or drag.
 - **The lifespan card** (`LifePicker.svelte`): the five lifespans, with none chosen.
   - It opens for a new note (⌘N, or New note on an empty page) and for a stone note dropped on the sand rail.
   - A held press (or Enter held on the focused one) chooses. For a new note, the number keys 1 to 5 choose too, and each lifespan shows its number. Esc or a click outside cancels.
@@ -96,6 +101,7 @@ Sheets and cards lie over the page on a dimmed, blurred ground. The page stays a
 - **Hold to act.** What keeps or lets go of a note is a press held for one second (`use:hold`).
   - The control fills from the left in its own color, and drains back if let go early. A plain click does nothing.
   - The one other use of a hold: the second action of a control whose click already acts (the hourglass's settings).
+  - Keys can hold too: ⌥⌘⌫ held lets go of the open note (`LetGoHold.svelte`). A card names the note and fills while the keys are held; released early, it drains. Both fills use `holdFill` (`lib/hold.ts`).
   - A control that only moves on, such as Continue, is a plain click.
 - **Keeping** is the longest hold: one second opens the keep card, then three seconds on its ring.
   - The note's rune (`lib/rune.ts`, from the reason or else the name) glows in as the ring fills.
@@ -111,18 +117,16 @@ Sheets and cards lie over the page on a dimmed, blurred ground. The page stays a
 ## Motion
 
 Everything that appears, goes, opens or moves does so over a moment. A jump is a bug.
-Use the tokens: `--quick` (160 ms) for hovers, `--settle` (420 ms) for arrivals, `--breath` (4 s) for the opening. `--ease` runs into place and stops, with no crawl at the end.
+Use the tokens: `--quick` (160 ms) for hovers, `--settle` (420 ms) for arrivals, `--breath` (4 s) for the mandala view's breathing. `--ease` runs into place and stops, with no crawl at the end.
 With `prefers-reduced-motion`, the tokens become 1 ms.
 
 | Moment | Motion |
 |---|---|
-| Arrive | The ring breathes in and out over 4 s; the petals turn a few degrees. |
-| Open | A held Open on "What's leaving": the cards spread their letters and blur (900 ms), 80 ms apart up to the eleventh; the title and the button fade with them (600 ms). |
+| Arrive | Nothing if arriving is quick. After 400 ms the glyph fades in and turns slowly (12 s a turn). While sync goes on, "Syncing" and its count fade in. |
 | The main window | It fades in over `--settle` once its first note is open, so empty rails never flash. |
 | Leaving soon | The note opens under a fall of sand (`SandFall.svelte`). Drag across it like a broom, or hold Sweep. It clears once 80% is swept, and stays clear for the visit. It follows the page as rails open and shut. |
 | Keep | The rune paints on and sets (950 ms). Then the note's row lifts out of the sand rail as a card and glides to its stone folder, from sand to stone (700 ms, `lib/flight.ts`). Nothing flies when a rail is hidden or faded, or the folder is closed. |
 | Let go, and sand that runs out | The open page crumbles into grains (`lib/crumble.ts`) that a soft wind carries right (about 2.2 s). The row stays until the sand has mostly blown (1.5 s), then the rows below close up (600 ms). Refreshes wait meanwhile, so the row never jumps early. |
-| Close | The breaths blur and fade as at Open, and the title and the buttons with them. |
 
 The rails get no sand when a note crumbles. In the app's WebKit, a row in a scrolled rail is not repainted while a canvas animates above it, so its card stayed drawn while the sand blew.
 
@@ -131,7 +135,7 @@ The rails get no sand when a note crumbles. In the app's WebKit, a row in a scro
 | Token | Value | Use |
 |---|---|---|
 | `--ground` | `#141317` | the page |
-| `--night` | `#0e0d10` | opening and closing |
+| `--night` | `#0e0d10` | the opening |
 | `--rail` | `#17161a` | rails, title bar |
 | `--raised` | `#18171b` | cards, sheets, code blocks |
 | `--line` | `#2c2a31` | every border |

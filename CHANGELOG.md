@@ -4,6 +4,26 @@ All notable changes to Mandala. Versions follow [Semantic Versioning](https://se
 
 ## Unreleased
 
+### Opening
+
+- No opening or closing screens. Mandala opens straight to your notes, with a small turning glyph only while sync is slow.
+- What ran out while Mandala was closed settles as it opens, and breaths settle as it closes. One message says what left, with Restore. Each note can still be restored for a day.
+- Closing quits at once, after the last save.
+
+### The page
+
+- ⌘/ switches between live preview and source view, where every mark shows. Each launch starts in live preview.
+- Fixed: find in note (⌘F) covered the note's header tools. It now sits below the header.
+- Each note keeps its own undo history until Mandala closes.
+- Fixed: ⌘Z on a note just opened brought back the text of the note before it, and saved it there.
+
+### The window
+
+- A menu (☰) at the right of the title bar replaces the help card: every shortcut, as an item to click.
+- The hourglass is now in the sand rail's head, so nothing sits beside the window's buttons.
+- In the menu, New note, Set in stone, Let go and Change vault are held for a second, each in its own color.
+- Hold ⌥⌘⌫ to let go of the open note. A card fills while you hold; release early and nothing happens.
+
 ### The docs
 
 - The docs call sand what it is: drafts. Mandala is draft-first.

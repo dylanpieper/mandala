@@ -10,7 +10,7 @@ How Mandala is built, the rules that hold everywhere, and how to run and check i
 - It works directly on a vault folder of plain markdown (an Obsidian vault, say).
 - Notes come in from elsewhere: Obsidian on a phone, another editor, any sync tool. There is no Mandala phone app and no server.
 
-Every new note is **sand** with a lifespan: a draft. A note becomes **stone** only when someone deliberately keeps it. Mandala only runs when it is open, so opening it is a ritual: arrive while sync catches up, see what came in, let go of what ran out, enter.
+Every new note is **sand** with a lifespan: a draft. A note becomes **stone** only when someone deliberately keeps it. Mandala only runs when it is open, so opening it is when time catches up: what ran out while it was closed settles, and one message says so.
 
 Stack: a Rust core (`crates/mandala-core`), a Tauri 2 shell (`src-tauri`), and a Svelte 5 window with a CodeMirror 6 live-preview editor (`src/`). No AI, no network, no accounts. The website (`site/`) is Astro 7.4 and holds these docs.
 
@@ -42,8 +42,8 @@ Each one exists because breaking it loses a note or confuses the person.
 
 - **Nothing is swept while Mandala is closed.**
   - Timed sand that runs out while Mandala is open is swept the moment it runs out (`sweep_ran_out`), even when its window is not in front. It settles for a day, and search and the mandala view can restore it.
-  - Sand that ran out while Mandala was closed waits for the arrival's "What's leaving".
-  - Breaths wait for the closing screen.
+  - Sand that ran out while Mandala was closed settles at the next arrival, once sync is done. One message names what left, with Restore.
+  - Breaths settle at the close. The next arrival names them in the same message.
 - **Never sweep from a stale view.** Arrival and `sweep_ran_out` both wait until `pending_downloads()` is 0. So a note edited on the phone is never swept for an old timestamp.
 - **Nothing is deleted outright.** A swept note and a note let go both `settle`: the note leaves the vault at once and rests in `.mandala/settling/` for 24 hours.
   - Only `purge` removes, and only after a day.
@@ -64,7 +64,7 @@ Each one exists because breaking it loses a note or confuses the person.
 | You are about to touch | Read first |
 |---|---|
 | Anything in `crates/mandala-core` | `site/docs/vault.md` |
-| `visit.rs`, `src/screens/Opening.svelte`, `Closing.svelte` | `site/docs/product.md` (Opening and closing) |
+| `visit.rs`, `src/screens/Opening.svelte` | `site/docs/product.md` (Opening and closing) |
 | `copies.rs`, `combine.rs`, `Combine.svelte` | `site/docs/combine.md` |
 | `src/editor/*`, `Editor.svelte` | `site/docs/editor.md` |
 | Any screen, component, color, spacing or motion | `site/docs/design.md` |
@@ -108,7 +108,7 @@ src/                     the window (Svelte 5)
   editor/wikilinks.ts      [[ autocomplete from note titles
   editor/tables.ts         tables drawn and edited as tables
   editor/tasks.ts          done tasks sink below open ones
-  components/ screens/     rails, keep dialog, search; choose, arrange, opening, main, closing
+  components/ screens/     rails, keep dialog, search; choose, arrange, opening, main
 site/                    the website: home page, teaser, docs explorer
   docs/                    these docs: how each part works and why
 scripts/screens.cjs      screenshots of every screen into shots/
