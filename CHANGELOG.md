@@ -4,6 +4,10 @@ All notable changes to Mandala. Versions follow [Semantic Versioning](https://se
 
 ## Unreleased
 
+## 0.3.0 (2026-11-11)
+
+A preview: quieter, with no opening or closing screens, a menu of every shortcut, source view, and undo that stays with its note.
+
 ### Opening
 
 - No opening or closing screens. Mandala opens straight to your notes, with a small turning glyph only while sync is slow.
