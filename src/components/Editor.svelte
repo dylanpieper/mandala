@@ -35,14 +35,14 @@
   let lastCaret: number | null = null;
 
   onMount(() => {
-    editor = createEditor(host, { text, noteTitles: () => titles, onExitTop: () => onExitTop(), onChange: (t) => onChange(t), onFollowLink: (t) => onFollowLink(t), onOpenDrawing: (n) => onOpenDrawing(n), onRemovePicture: (n) => onRemovePicture(n) });
+    editor = createEditor(host, { key: rel, text, noteTitles: () => titles, onExitTop: () => onExitTop(), onChange: (t) => onChange(t), onFollowLink: (t) => onFollowLink(t), onOpenDrawing: (n) => onOpenDrawing(n), onRemovePicture: (n) => onRemovePicture(n) });
     loadedRel = rel;
   });
 
-  // A different note opened: load it without counting as an edit.
+  // A different note opened: load it without counting as an edit, with its own undo history.
   $effect(() => {
     if (editor && rel !== loadedRel) {
-      editor.load(text);
+      editor.load(rel, text);
       loadedRel = rel;
       lastCaret = null;
     }
@@ -133,6 +133,7 @@
   /** The open note was renamed: the same text under a new path, so nothing is loaded again. */
   export function renamed(to: string) {
     loadedRel = to;
+    editor?.rekey(to);
   }
 
   /** A picture changed on disk: draw it again. */
