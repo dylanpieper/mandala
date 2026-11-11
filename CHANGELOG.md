@@ -24,6 +24,10 @@ All notable changes to Mandala. Versions follow [Semantic Versioning](https://se
 - In the menu, New note, Set in stone, Let go and Change vault are held for a second, each in its own color.
 - Hold ⌥⌘⌫ to let go of the open note. A card fills while you hold; release early and nothing happens.
 
+### The site
+
+- The home page is centred: the logo, the line, and the downloads. The teaser is gone.
+
 ## 0.2.0 (2026-11-09)
 
 A preview: lifespans front and center, better lists and tables, and a fix for a note that seemed to lose its words.
